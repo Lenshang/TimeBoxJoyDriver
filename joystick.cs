@@ -1,11 +1,14 @@
 ﻿using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
+using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,22 +24,36 @@ namespace TimeBoxJoy
 
         private NetworkStream peerStream;
 
-        private string joystickMacAddr;
-
         private uint joyStickId;
 
-        private ushort[] pressedButton = new ushort[4];
+        private Xbox360Controller vjoy;
 
-        private ushort[] newPressedButton = new ushort[4];
-        private byte[] buffer = new byte[18];
+        private byte[] buffer = new byte[64];
+        private byte[] sign;
+
+        //按键相关Buffer
+        byte[] _checkSign = new byte[3];
+        byte _check = new byte();
+        byte[] _tmpArry = new byte[4];
+        byte _leftX = new byte();
+        byte _leftY = new byte();
+        byte _rightX = new byte();
+        byte _rightY = new byte();
+        byte _leftTrigger = new byte();
+        byte _rightTrigger = new byte();
+        byte _bt1 = new byte();
+        byte _bt2 = new byte();
+        byte _bt3 = new byte();
+
         public Action<byte[]> OnReceive;
         public JoyStick(string macAddr)
         {
-            this.joystickMacAddr = macAddr;
             BluetoothAddress address = BluetoothAddress.Parse(macAddr);
             Guid serialPort = BluetoothService.SerialPort;
             this.ep = new BluetoothEndPoint(address, serialPort);
             this.cli = new BluetoothClient();
+            this.vjoy = new Xbox360Controller(new ViGEmClient());
+            this.sign = HexStrTobyte("EEC10F");
         }
 
         public bool StartConnect(int id)
@@ -98,15 +115,21 @@ namespace TimeBoxJoy
         }
         public void StartRead()
         {
-            this.peerStream.BeginRead(buffer,0,18,new AsyncCallback(BeginReadCallback),null);
+            this.peerStream.BeginRead(buffer,0,64,new AsyncCallback(BeginReadCallback),null);
         }
         public void BeginReadCallback(IAsyncResult ar)
         {
             var count=this.peerStream.EndRead(ar);
-            if (count == 18)
-            {
-                this.OnReceive?.Invoke(buffer);
-            }
+            //if (count == 18)
+            //{
+            //    this.OnReceive?.Invoke(buffer);
+            //}
+            //else
+            //{
+            //    this.OnReceive?.Invoke(buffer);
+            //}
+            this.OnReceive?.Invoke(buffer);
+            Parse();
             StartRead();
         }
         public bool CheckConnect()
@@ -141,6 +164,22 @@ namespace TimeBoxJoy
             }
             return true;
         }
+
+        private void Parse()
+        {
+            MemoryStream stream = new MemoryStream(this.buffer);
+            stream.Seek(0, SeekOrigin.Begin);
+            StreamReader reader = new StreamReader(stream);
+
+
+            stream.Read(_checkSign, 0, 3);
+            if (!byteEqual(this.sign, _checkSign))
+            {
+                return;
+            }
+
+            
+        }
         private byte[] getSignStr(byte[] signStr)
         {
             int i = 0;
@@ -152,6 +191,33 @@ namespace TimeBoxJoy
             }
             signStr[7] = b;
             return signStr;
+        }
+
+        private bool byteEqual(byte[] b1, byte[] b2)
+        {
+            var count = b1.Count();
+            if (count != b2.Count())
+            {
+                return false;
+            }
+            for(int i=0;i< count; i++)
+            {
+                if (b1[i] != b2[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private byte[] HexStrTobyte(string hexString)
+        {
+            hexString = hexString.Replace(" ", "");
+            if ((hexString.Length % 2) != 0)
+                hexString += " ";
+            byte[] returnBytes = new byte[hexString.Length / 2];
+            for (int i = 0; i < returnBytes.Length; i++)
+                returnBytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2).Trim(), 16);
+            return returnBytes;
         }
     }
 }
