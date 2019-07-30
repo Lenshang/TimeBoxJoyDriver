@@ -29,52 +29,61 @@ namespace TimeBoxJoy
         {
             InitializeComponent();
             //blueDeviceList = new List<BluetoothDeviceInfo>();
-            timeBoxJoyList = new List<BTDeviceInfo>();
-            blueClient = new BluetoothClient();
-            blueComponent = new BluetoothComponent(blueClient);
-            blueComponent.DiscoverDevicesProgress += (sender, e) => {
-                //foreach (var device in e.Devices)
-                //{
-                //    if (!this.blueDeviceList.Any(p => p.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
-                //    {
-                //        this.blueDeviceList.Add(device);
-                //    }
-                //}
-                //blueDeviceList.AddRange(e.Devices);
-                foreach (var device in e.Devices)
-                {
-                    if (device.DeviceName == "timebox" && !this.timeBoxJoyList.Any(p => p.bluetoothDeviceInfo.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
+            try
+            {
+                timeBoxJoyList = new List<BTDeviceInfo>();
+                blueClient = new BluetoothClient();
+                blueComponent = new BluetoothComponent(blueClient);
+                blueComponent.DiscoverDevicesProgress += (sender, e) => {
+                    //foreach (var device in e.Devices)
+                    //{
+                    //    if (!this.blueDeviceList.Any(p => p.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
+                    //    {
+                    //        this.blueDeviceList.Add(device);
+                    //    }
+                    //}
+                    //blueDeviceList.AddRange(e.Devices);
+                    foreach (var device in e.Devices)
                     {
-                        this.timeBoxJoyList.Add(new BTDeviceInfo(device));
-                    }
-                }
-                UpdateListbox();
-            };
-            blueComponent.DiscoverDevicesComplete += (sender, e) => {
-                if ((DateTime.Now - startScan) < TimeSpan.FromSeconds(20))
-                {
-                    this.Invoke(new Action(() => {
-                        if (button2.Text.Length > 6)
+                        if (device.DeviceName == "timebox" && !this.timeBoxJoyList.Any(p => p.bluetoothDeviceInfo.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
                         {
-                            button2.Text = "扫描中";
+                            this.timeBoxJoyList.Add(new BTDeviceInfo(device));
                         }
-                        button2.Text += ".";
-                    }));
-                    blueComponent.DiscoverDevicesAsync(255, true, true, false, true, null);
-                }
-                else
-                {
-                    this.Invoke(new Action(() => {
-                        button2.Text = "重新扫描";
-                    }));
-                }
-            };
-            ScanBTDevice();
-            //启动自动扫描手柄状态线程
-            Thread tr = new Thread(new ThreadStart(() => {
-                ScanJoyConnection();
-            }));
-            tr.Start();
+                    }
+                    UpdateListbox();
+                };
+                blueComponent.DiscoverDevicesComplete += (sender, e) => {
+                    if ((DateTime.Now - startScan) < TimeSpan.FromSeconds(20))
+                    {
+                        this.Invoke(new Action(() => {
+                            if (button2.Text.Length > 6)
+                            {
+                                button2.Text = "扫描中";
+                            }
+                            button2.Text += ".";
+                        }));
+                        blueComponent.DiscoverDevicesAsync(255, true, true, false, true, null);
+                    }
+                    else
+                    {
+                        this.Invoke(new Action(() => {
+                            button2.Text = "重新扫描";
+                        }));
+                    }
+                };
+                ScanBTDevice();
+                //启动自动扫描手柄状态线程
+                Thread tr = new Thread(new ThreadStart(() => {
+                    ScanJoyConnection();
+                }));
+                tr.Start();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                System.Environment.Exit(0);
+            }
+
         }
         private void ScanBTDevice()
         {
@@ -100,7 +109,7 @@ namespace TimeBoxJoy
         {
             JoyStick joyst = new JoyStick(joy.bluetoothDeviceInfo.DeviceAddress.ToString());
             joy.joyStick = joyst;
-            if (joy.joyStick.StartConnect(0))
+            if (joy.joyStick.StartConnect(1))
             {
                 joy.State = deviceState.CONNECT;
                 UpdateListbox();
@@ -109,7 +118,14 @@ namespace TimeBoxJoy
                     this.ShowMsg(text);
                 };
                 //joy.joyStick.SetJoyMap(new KeyBoardJoyMap());
-                joy.joyStick.SetJoyMap(new VitualXinputJoyMap());
+                IJoyMap map = new VitualXinputJoyMap();
+                if (!map.Initialize(ex=> {
+                    MessageBox.Show(ex.Message+"\r\n已切换回键盘映射模式");
+                }))
+                {
+                    map = new KeyBoardJoyMap();
+                }
+                joy.joyStick.SetJoyMap(map);
                 joy.joyStick.startFeed();
             }
         }
@@ -181,6 +197,46 @@ namespace TimeBoxJoy
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             System.Environment.Exit(0);
+        }
+
+        private void Button3_Click(object sender, EventArgs e)
+        {
+            var joy = (BTDeviceInfo)listBox1.SelectedItem;
+            if (joy != null)
+            {
+                if (joy.State == deviceState.CONNECT||joy.State==deviceState.CONNECTING)
+                {
+                    joy.State = deviceState.DISCONNECT;
+                    joy.joyStick.Disconnect();
+                    UpdateListbox();
+                }
+            }
+        }
+
+        private void Button4_Click(object sender, EventArgs e)
+        {
+            var joy = (BTDeviceInfo)listBox1.SelectedItem;
+            if (joy != null)
+            {
+                IJoyMap map = new VitualXinputJoyMap();
+                if (!map.Initialize(ex => {
+                    MessageBox.Show(ex.Message + "\r\n已切换回键盘映射模式");
+                }))
+                {
+                    map = new KeyBoardJoyMap();
+                }
+                joy.joyStick.SetJoyMap(map);
+            }
+        }
+
+        private void Button5_Click(object sender, EventArgs e)
+        {
+            var joy = (BTDeviceInfo)listBox1.SelectedItem;
+            if (joy != null)
+            {
+                IJoyMap map = new KeyBoardJoyMap();
+                joy.joyStick.SetJoyMap(map);
+            }
         }
     }
 }

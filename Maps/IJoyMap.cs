@@ -8,11 +8,8 @@ namespace TimeBoxJoy
 {
     public abstract class IJoyMap
     {
-        public void SetLeftRemote(byte[] x,byte[] y)
-        {
-
-        }
-
+        public abstract bool Initialize(Action<Exception> FailedCallback);
+        public string Name { get; set; }
         public virtual void OnKeyArray(byte[] buffer)
         {
 

@@ -67,11 +67,17 @@ namespace TimeBoxJoy.Maps
                 var str = JsonConvert.SerializeObject(this.config);
                 fh.SaveFile("kbmap.config", str);
             }
+            this.Name = "Defalt Keyboard Map";
         }
         byte[] HoldKeyCache = new byte[4];
         byte[] KeyCache = new byte[10];
         public byte TriggerDeadArea = 120;
         public byte RemoteDeadAreaOffset = 50;
+
+        public override bool Initialize(Action<Exception> FailedCallback)
+        {
+            return true;
+        }
         public override void OnKeyArray(byte[] buffer)
         {
             byte[] _holdKeyCache = new byte[4];
