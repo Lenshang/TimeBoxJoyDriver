@@ -11,12 +11,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TimeBoxJoy.Maps;
+using TimeBoxJoy.Utils;
 
 namespace TimeBoxJoy
 {
     public partial class Form1 : Form
     {
-        private List<BluetoothDeviceInfo> blueDeviceList;
+        //private List<BluetoothDeviceInfo> blueDeviceList;
         private List<BTDeviceInfo> timeBoxJoyList;
         private BluetoothComponent blueComponent;
         private BluetoothClient blueClient;
@@ -26,23 +28,20 @@ namespace TimeBoxJoy
         public Form1()
         {
             InitializeComponent();
-            blueDeviceList = new List<BluetoothDeviceInfo>();
+            //blueDeviceList = new List<BluetoothDeviceInfo>();
             timeBoxJoyList = new List<BTDeviceInfo>();
             blueClient = new BluetoothClient();
             blueComponent = new BluetoothComponent(blueClient);
             blueComponent.DiscoverDevicesProgress += (sender, e) => {
-                foreach (var device in e.Devices)
-                {
-                    if (!this.blueDeviceList.Any(p => p.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
-                    {
-                        this.blueDeviceList.Add(device);
-                    }
-                }
+                //foreach (var device in e.Devices)
+                //{
+                //    if (!this.blueDeviceList.Any(p => p.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
+                //    {
+                //        this.blueDeviceList.Add(device);
+                //    }
+                //}
                 //blueDeviceList.AddRange(e.Devices);
-            };
-            blueComponent.DiscoverDevicesComplete += (sender, e) => {
-                this.timeBoxJoyList.RemoveAll(i => i.State == deviceState.DISCONNECT);
-                foreach (var device in blueDeviceList)
+                foreach (var device in e.Devices)
                 {
                     if (device.DeviceName == "timebox" && !this.timeBoxJoyList.Any(p => p.bluetoothDeviceInfo.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
                     {
@@ -50,6 +49,8 @@ namespace TimeBoxJoy
                     }
                 }
                 UpdateListbox();
+            };
+            blueComponent.DiscoverDevicesComplete += (sender, e) => {
                 if ((DateTime.Now - startScan) < TimeSpan.FromSeconds(20))
                 {
                     this.Invoke(new Action(() => {
@@ -101,12 +102,13 @@ namespace TimeBoxJoy
             joy.joyStick = joyst;
             if (joy.joyStick.StartConnect(0))
             {
-                joy.State = deviceState.CONNECTED;
+                joy.State = deviceState.CONNECT;
                 UpdateListbox();
                 joy.joyStick.OnReceive = buffer => {
-                    string text = byteToHexStr(buffer, 18);
+                    string text = HexHelper.byteToHexStr(buffer, 18);
                     this.ShowMsg(text);
                 };
+                joy.joyStick.SetJoyMap(new KeyBoardJoyMap());
                 joy.joyStick.startFeed();
             }
         }
@@ -115,17 +117,18 @@ namespace TimeBoxJoy
 
             while (true)
             {
-                BTDeviceInfo joy = timeBoxJoyList.Where(i => i.State == deviceState.CONNECTED).FirstOrDefault();
+                BTDeviceInfo joy = timeBoxJoyList.Where(i => i.State == deviceState.CONNECT).FirstOrDefault();
                 if (joy != null)
                 {
                     if (!joy.joyStick.CheckConnect())
                     {
                         joy.State = deviceState.LOST;
+                        this.UpdateListbox();
                     }
                 }
 
 
-                joy = timeBoxJoyList.Where(i => i.State==deviceState.CONNECTION).FirstOrDefault();
+                joy = timeBoxJoyList.Where(i => i.State==deviceState.CONNECTING).FirstOrDefault();
                 if (joy != null)
                 {
                     ConnectJoy(joy);
@@ -159,7 +162,7 @@ namespace TimeBoxJoy
             {
                 if (joy.State == deviceState.DISCONNECT)
                 {
-                    joy.State = deviceState.CONNECTION;
+                    joy.State = deviceState.CONNECTING;
                     UpdateListbox();
                 }
             }
@@ -168,25 +171,15 @@ namespace TimeBoxJoy
 
         private void Button2_Click(object sender, EventArgs e)
         {
+            this.timeBoxJoyList.RemoveAll(i => i.State == deviceState.DISCONNECT);
             ScanBTDevice();
         }
 
-        private string byteToHexStr(byte[] bytes, int length)
-        {
-            string returnStr = "";
-            if (bytes != null)
-            {
-                for (int i = 0; i < length; i++)
-                {
-                    returnStr += bytes[i].ToString("X2");
-                }
-            }
-            return returnStr;
-        }
+
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Application.Exit();
+            System.Environment.Exit(0);
         }
     }
 }

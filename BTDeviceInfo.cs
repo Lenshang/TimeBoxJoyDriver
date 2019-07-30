@@ -11,8 +11,8 @@ namespace TimeBoxJoy
     public enum deviceState
     {
         DISCONNECT,
-        CONNECTION,
-        CONNECTED,
+        CONNECTING,
+        CONNECT,
         LOST
     }
     public class BTDeviceInfo

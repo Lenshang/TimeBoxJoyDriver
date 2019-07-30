@@ -26,24 +26,25 @@ namespace TimeBoxJoy
 
         private uint joyStickId;
 
-        private Xbox360Controller vjoy;
+        private IJoyMap joyMap;
+
+        private int HeartBeatInterval=0;
 
         private byte[] buffer = new byte[64];
         private byte[] sign;
 
         //按键相关Buffer
-        byte[] _checkSign = new byte[3];
-        byte _check = new byte();
-        byte[] _tmpArry = new byte[4];
-        byte _leftX = new byte();
-        byte _leftY = new byte();
-        byte _rightX = new byte();
-        byte _rightY = new byte();
-        byte _leftTrigger = new byte();
-        byte _rightTrigger = new byte();
-        byte _bt1 = new byte();
-        byte _bt2 = new byte();
-        byte _bt3 = new byte();
+        byte[] _checkHeader = new byte[3];
+        byte[] _check = new byte[1];
+        byte[] _keyArray = new byte[4];
+        byte[] _placeHolder = new byte[1];
+        byte[] _leftX = new byte[1];
+        byte[] _leftY = new byte[1];
+        byte[] _rightX = new byte[1];
+        byte[] _rightY = new byte[1];
+        byte[] _leftTrigger = new byte[1];
+        byte[] _rightTrigger = new byte[1];
+        byte[] _btSum = new byte[3];
 
         public Action<byte[]> OnReceive;
         public JoyStick(string macAddr)
@@ -52,10 +53,12 @@ namespace TimeBoxJoy
             Guid serialPort = BluetoothService.SerialPort;
             this.ep = new BluetoothEndPoint(address, serialPort);
             this.cli = new BluetoothClient();
-            this.vjoy = new Xbox360Controller(new ViGEmClient());
             this.sign = HexStrTobyte("EEC10F");
         }
-
+        public void SetJoyMap(IJoyMap map)
+        {
+            this.joyMap = map;
+        }
         public bool StartConnect(int id)
         {
             bool result;
@@ -89,54 +92,203 @@ namespace TimeBoxJoy
         }
         public void startFeed()
         {
-            //Thread thr = new Thread(new ThreadStart(()=> {
-            //    while (true)
-            //    {
-            //        if (this.peerStream.DataAvailable)
-            //        {
-            //            byte[] outbyte = new byte[18];
-            //            if (this.peerStream.Read(outbyte, 0, 18) == 18)
-            //            {
-            //                string text = byteToHexStr(outbyte, 18);
-            //                if (checkSign(text))
-            //                {
-            //                    callback.Invoke(text);
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            Thread.Sleep(100);
-            //        }
-            //    }
-            //}));
-            //thr.Start();
             StartRead();
-        }
-        public void StartRead()
-        {
-            this.peerStream.BeginRead(buffer,0,64,new AsyncCallback(BeginReadCallback),null);
-        }
-        public void BeginReadCallback(IAsyncResult ar)
-        {
-            var count=this.peerStream.EndRead(ar);
-            //if (count == 18)
-            //{
-            //    this.OnReceive?.Invoke(buffer);
-            //}
-            //else
-            //{
-            //    this.OnReceive?.Invoke(buffer);
-            //}
-            this.OnReceive?.Invoke(buffer);
-            Parse();
-            StartRead();
-        }
-        public bool CheckConnect()
-        {
-            return this.cli.Connected;
         }
 
+        #region 传输+解析
+        public void StartRead()
+        {
+            this.peerStream.BeginRead(_checkHeader, 0,3,new AsyncCallback(ParseHeader),null);
+        }
+        public void ParseHeader(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                if (!byteEqual(this.sign, _checkHeader))
+                {
+                    StartRead();
+                }
+                else
+                {
+                    this.peerStream.BeginRead(_check, 0, 1, new AsyncCallback(ParseCheck), null);
+                }
+            }
+
+        }
+        public void ParseCheck(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 验证Check
+                this.peerStream.BeginRead(_keyArray, 0, 4, new AsyncCallback(ParseKeyArray), null);
+            }
+
+        }
+        public void ParseKeyArray(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 按键映射
+                this.joyMap.OnKeyArray(_keyArray);
+
+                this.peerStream.BeginRead(_placeHolder, 0, 1, new AsyncCallback(ParsePlaceHolder), null);
+            }
+        }
+        public void ParsePlaceHolder(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                this.peerStream.BeginRead(_leftX, 0, 1, new AsyncCallback(ParseLeftX), null);
+            }
+        }
+        /// <summary>
+        /// 解析左摇杆X轴
+        /// </summary>
+        /// <param name="ar"></param>
+        public void ParseLeftX(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 
+                this.peerStream.BeginRead(_leftY, 0, 1, new AsyncCallback(ParseLeftY), null);
+            }
+        }
+        /// <summary>
+        /// 解析左摇杆Y轴
+        /// </summary>
+        /// <param name="ar"></param>
+        public void ParseLeftY(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 
+                this.peerStream.BeginRead(_rightX, 0, 1, new AsyncCallback(ParseRightX), null);
+            }
+        }
+        /// <summary>
+        /// 解析右摇杆X轴
+        /// </summary>
+        /// <param name="ar"></param>
+        public void ParseRightX(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 
+                this.peerStream.BeginRead(_rightY, 0, 1, new AsyncCallback(ParseRightY), null);
+            }
+        }
+        /// <summary>
+        /// 解析右摇杆Y轴
+        /// </summary>
+        /// <param name="ar"></param>
+        public void ParseRightY(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 
+                this.peerStream.BeginRead(_leftTrigger, 0, 1, new AsyncCallback(ParseLeftTrigger), null);
+            }
+
+        }
+        /// <summary>
+        /// 解析左扳机键
+        /// </summary>
+        /// <param name="ar"></param>
+        public void ParseLeftTrigger(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 
+                this.peerStream.BeginRead(_rightTrigger, 0, 1, new AsyncCallback(ParseRightTrigger), null);
+            }
+        }
+        /// <summary>
+        /// 解析右扳机键
+        /// </summary>
+        /// <param name="ar"></param>
+        public void ParseRightTrigger(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 
+                this.peerStream.BeginRead(_btSum, 0, 3, new AsyncCallback(ParseButtomSum), null);
+            }
+        }
+        /// <summary>
+        /// 解析按键和值计算验证
+        /// </summary>
+        /// <param name="ar"></param>
+        public void ParseButtomSum(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                //TODO 
+
+#if DEBUG
+                //测试用
+                byte[] all = new byte[18];
+                _checkHeader.CopyTo(all, 0);
+                _check.CopyTo(all, 3);
+                _keyArray.CopyTo(all, 4);
+                _leftX.CopyTo(all, 9);
+                _leftY.CopyTo(all, 10);
+                _rightX.CopyTo(all, 11);
+                _rightY.CopyTo(all, 12);
+                _leftTrigger.CopyTo(all, 13);
+                _rightTrigger.CopyTo(all, 14);
+                _btSum.CopyTo(all, 15);
+                this.OnReceive?.Invoke(all);
+#endif
+                StartRead();
+            }
+        }
+
+        private int EndReadStream(IAsyncResult ar)
+        {
+            try
+            {
+                var count = this.peerStream.EndRead(ar);
+                return count;
+            }
+            catch
+            {
+                this.Disconnect();
+                return -1;
+            }
+        }
+        #endregion
+        public bool CheckConnect()
+        {
+            HeartBeatInterval += 1;
+            if (HeartBeatInterval < 5)
+            {
+                return true;
+            }
+
+            HeartBeatInterval = 0;
+            try
+            {
+                this.peerStream.Write(new byte[1], 0, 1);
+                return true;
+            }
+            catch
+            {
+                this.Disconnect();
+                return false;
+            }
+        }
+        public void Disconnect()
+        {
+            try
+            {
+                this.peerStream.Dispose();
+                this.cli.Dispose();
+            }
+            catch
+            {
+
+            }
+        }
         private bool checkSign(string keyCode)
         {
             uint num = 0u;
@@ -165,21 +317,6 @@ namespace TimeBoxJoy
             return true;
         }
 
-        private void Parse()
-        {
-            MemoryStream stream = new MemoryStream(this.buffer);
-            stream.Seek(0, SeekOrigin.Begin);
-            StreamReader reader = new StreamReader(stream);
-
-
-            stream.Read(_checkSign, 0, 3);
-            if (!byteEqual(this.sign, _checkSign))
-            {
-                return;
-            }
-
-            
-        }
         private byte[] getSignStr(byte[] signStr)
         {
             int i = 0;
