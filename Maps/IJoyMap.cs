@@ -8,16 +8,15 @@ namespace TimeBoxJoy
 {
     public abstract class IJoyMap
     {
-        public void SetKeyArray(byte[] buffer)
-        {
-            this.OnKeyArray(buffer);
-        }
-
         public void SetLeftRemote(byte[] x,byte[] y)
         {
 
         }
 
         public abstract void OnKeyArray(byte[] buffer);
+        public abstract void OnLTrigger(byte[] value);
+        public abstract void OnRTrigger(byte[] value);
+        public abstract void OnLeftRemote(byte[] x, byte[] y);
+        public abstract void OnRightRemote(byte[] x, byte[] y);
     }
 }

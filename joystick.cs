@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TimeBoxJoy.Utils;
 
 namespace TimeBoxJoy
 {
@@ -30,7 +31,7 @@ namespace TimeBoxJoy
 
         private int HeartBeatInterval=0;
 
-        private byte[] buffer = new byte[64];
+        private byte[] buffer = new byte[18];
         private byte[] sign;
 
         //按键相关Buffer
@@ -98,7 +99,41 @@ namespace TimeBoxJoy
         #region 传输+解析
         public void StartRead()
         {
-            this.peerStream.BeginRead(_checkHeader, 0,3,new AsyncCallback(ParseHeader),null);
+            //版本1
+            //this.BeginReadStream(_checkHeader, 3, ParseHeader);
+            //版本2
+            this.BeginReadStream(buffer, 18, ParseAll);
+
+            //this.peerStream.BeginRead(_checkHeader, 0,3,new AsyncCallback(ParseHeader),null);
+        }
+        /// <summary>
+        /// 版本2 一口气读取18个字节
+        /// </summary>
+        /// <param name="ar"></param>
+        public void ParseAll(IAsyncResult ar)
+        {
+            if (EndReadStream(ar) >= 0)
+            {
+                MemoryStream ms = new MemoryStream(buffer);
+                ms.Read(_checkHeader, 0, 3);
+                if (!byteEqual(this.sign, _checkHeader))
+                {
+                    this.BeginReadStream(buffer, 18, ParseAll);
+                    return;
+                }
+                ms.Read(_check, 0, 1);
+                ms.Read(_keyArray, 0, 4);
+                ms.Read(_placeHolder, 0, 1);
+                ms.Read(_leftX, 0, 1);
+                ms.Read(_leftY, 0, 1);
+                ms.Read(_rightX, 0, 1);
+                ms.Read(_rightY, 0, 1);
+                ms.Read(_leftTrigger, 0, 1);
+                ms.Read(_rightTrigger, 0, 1);
+                ms.Read(_btSum, 0, 3);
+                ParseAction();
+                this.BeginReadStream(buffer, 18, ParseAll);
+            }
         }
         public void ParseHeader(IAsyncResult ar)
         {
@@ -110,7 +145,8 @@ namespace TimeBoxJoy
                 }
                 else
                 {
-                    this.peerStream.BeginRead(_check, 0, 1, new AsyncCallback(ParseCheck), null);
+                    this.BeginReadStream(_check, 1, ParseCheck);
+                    //this.peerStream.BeginRead(_check, 0, 1, new AsyncCallback(ParseCheck), null);
                 }
             }
 
@@ -120,7 +156,9 @@ namespace TimeBoxJoy
             if (EndReadStream(ar) >= 0)
             {
                 //TODO 验证Check
-                this.peerStream.BeginRead(_keyArray, 0, 4, new AsyncCallback(ParseKeyArray), null);
+
+                this.BeginReadStream(_keyArray, 4, ParseKeyArray);
+                //this.peerStream.BeginRead(_keyArray, 0, 4, new AsyncCallback(ParseKeyArray), null);
             }
 
         }
@@ -128,17 +166,16 @@ namespace TimeBoxJoy
         {
             if (EndReadStream(ar) >= 0)
             {
-                //TODO 按键映射
-                this.joyMap.OnKeyArray(_keyArray);
-
-                this.peerStream.BeginRead(_placeHolder, 0, 1, new AsyncCallback(ParsePlaceHolder), null);
+                this.BeginReadStream(_placeHolder, 1, ParsePlaceHolder);
+                //this.peerStream.BeginRead(_placeHolder, 0, 1, new AsyncCallback(ParsePlaceHolder), null);
             }
         }
         public void ParsePlaceHolder(IAsyncResult ar)
         {
             if (EndReadStream(ar) >= 0)
             {
-                this.peerStream.BeginRead(_leftX, 0, 1, new AsyncCallback(ParseLeftX), null);
+                this.BeginReadStream(_leftX, 1, ParseLeftX);
+                //this.peerStream.BeginRead(_leftX, 0, 1, new AsyncCallback(ParseLeftX), null);
             }
         }
         /// <summary>
@@ -150,7 +187,8 @@ namespace TimeBoxJoy
             if (EndReadStream(ar) >= 0)
             {
                 //TODO 
-                this.peerStream.BeginRead(_leftY, 0, 1, new AsyncCallback(ParseLeftY), null);
+                this.BeginReadStream(_leftY, 1, ParseLeftY);
+                //this.peerStream.BeginRead(_leftY, 0, 1, new AsyncCallback(ParseLeftY), null);
             }
         }
         /// <summary>
@@ -161,8 +199,8 @@ namespace TimeBoxJoy
         {
             if (EndReadStream(ar) >= 0)
             {
-                //TODO 
-                this.peerStream.BeginRead(_rightX, 0, 1, new AsyncCallback(ParseRightX), null);
+                this.BeginReadStream(_rightX, 1, ParseRightX);
+                //this.peerStream.BeginRead(_rightX, 0, 1, new AsyncCallback(ParseRightX), null);
             }
         }
         /// <summary>
@@ -174,7 +212,8 @@ namespace TimeBoxJoy
             if (EndReadStream(ar) >= 0)
             {
                 //TODO 
-                this.peerStream.BeginRead(_rightY, 0, 1, new AsyncCallback(ParseRightY), null);
+                this.BeginReadStream(_rightY, 1, ParseRightY);
+                //this.peerStream.BeginRead(_rightY, 0, 1, new AsyncCallback(ParseRightY), null);
             }
         }
         /// <summary>
@@ -185,8 +224,8 @@ namespace TimeBoxJoy
         {
             if (EndReadStream(ar) >= 0)
             {
-                //TODO 
-                this.peerStream.BeginRead(_leftTrigger, 0, 1, new AsyncCallback(ParseLeftTrigger), null);
+                this.BeginReadStream(_leftTrigger, 1, ParseLeftTrigger);
+                //this.peerStream.BeginRead(_leftTrigger, 0, 1, new AsyncCallback(ParseLeftTrigger), null);
             }
 
         }
@@ -198,8 +237,8 @@ namespace TimeBoxJoy
         {
             if (EndReadStream(ar) >= 0)
             {
-                //TODO 
-                this.peerStream.BeginRead(_rightTrigger, 0, 1, new AsyncCallback(ParseRightTrigger), null);
+                this.BeginReadStream(_rightTrigger, 1, ParseRightTrigger);
+                //this.peerStream.BeginRead(_rightTrigger, 0, 1, new AsyncCallback(ParseRightTrigger), null);
             }
         }
         /// <summary>
@@ -210,8 +249,8 @@ namespace TimeBoxJoy
         {
             if (EndReadStream(ar) >= 0)
             {
-                //TODO 
-                this.peerStream.BeginRead(_btSum, 0, 3, new AsyncCallback(ParseButtomSum), null);
+                this.BeginReadStream(_btSum, 3, ParseButtomSum);
+                //this.peerStream.BeginRead(_btSum, 0, 3, new AsyncCallback(ParseButtomSum), null);
             }
         }
         /// <summary>
@@ -222,27 +261,23 @@ namespace TimeBoxJoy
         {
             if (EndReadStream(ar) >= 0)
             {
-                //TODO 
-
-#if DEBUG
-                //测试用
-                byte[] all = new byte[18];
-                _checkHeader.CopyTo(all, 0);
-                _check.CopyTo(all, 3);
-                _keyArray.CopyTo(all, 4);
-                _leftX.CopyTo(all, 9);
-                _leftY.CopyTo(all, 10);
-                _rightX.CopyTo(all, 11);
-                _rightY.CopyTo(all, 12);
-                _leftTrigger.CopyTo(all, 13);
-                _rightTrigger.CopyTo(all, 14);
-                _btSum.CopyTo(all, 15);
-                this.OnReceive?.Invoke(all);
-#endif
+                ParseAction();
                 StartRead();
             }
         }
-
+        private bool BeginReadStream(byte[] buffer,int size,Action<IAsyncResult> callback)
+        {
+            try
+            {
+                this.peerStream.BeginRead(buffer, 0, size, new AsyncCallback(callback), null);
+                return true;
+            }
+            catch
+            {
+                this.Disconnect();
+                return false;
+            }
+        }
         private int EndReadStream(IAsyncResult ar)
         {
             try
@@ -257,6 +292,51 @@ namespace TimeBoxJoy
             }
         }
         #endregion
+        public void ParseAction()
+        {
+            //验证Check
+            uint num = 0;
+            foreach (byte b in _keyArray)
+            {
+                num += b;
+            }
+            num += _leftX[0];
+            num += _leftY[0];
+            num += _rightX[0];
+            num += _rightY[0];
+            num += _leftTrigger[0];
+            num += _rightTrigger[0];
+            foreach (byte b in _btSum)
+            {
+                num += b;
+            }
+            num = (num - 15u) % 256u;
+            if (num == _check[0])
+            {
+#if DEBUG
+                //测试用
+                byte[] all = new byte[18];
+                _checkHeader.CopyTo(all, 0);
+                _check.CopyTo(all, 3);
+                _keyArray.CopyTo(all, 4);
+                _leftX.CopyTo(all, 9);
+                _leftY.CopyTo(all, 10);
+                _rightX.CopyTo(all, 11);
+                _rightY.CopyTo(all, 12);
+                _leftTrigger.CopyTo(all, 13);
+                _rightTrigger.CopyTo(all, 14);
+                _btSum.CopyTo(all, 15);
+                this.OnReceive?.Invoke(all);
+                //System.Diagnostics.Debug.WriteLine(HexHelper.byteToHexStr(all, all.Length));
+#endif
+                //TODO 
+                this.joyMap.OnKeyArray(_keyArray);
+                this.joyMap.OnLeftRemote(_leftX, _leftY);
+                this.joyMap.OnRightRemote(_rightX, _rightY);
+                this.joyMap.OnLTrigger(_leftTrigger);
+                this.joyMap.OnRTrigger(_rightTrigger);
+            }
+        }
         public bool CheckConnect()
         {
             HeartBeatInterval += 1;
@@ -288,33 +368,6 @@ namespace TimeBoxJoy
             {
 
             }
-        }
-        private bool checkSign(string keyCode)
-        {
-            uint num = 0u;
-            if (keyCode.Substring(0, 6) != "EEC10F")
-            {
-                return false;
-            }
-            string text = keyCode.Substring(6, 2);
-            for (int i = 4; i < 18; i++)
-            {
-                num += Convert.ToUInt32(keyCode.Substring(i * 2, 2), 16);
-            }
-            num = (num - 15u) % 256u;
-            if (num != Convert.ToUInt32(text, 16))
-            {
-                Console.WriteLine(string.Concat(new string[]
-                {
-                    keyCode,
-                    "|Err:",
-                    num.ToString(),
-                    "|",
-                    text
-                }));
-                return false;
-            }
-            return true;
         }
 
         private byte[] getSignStr(byte[] signStr)
