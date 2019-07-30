@@ -13,10 +13,34 @@ namespace TimeBoxJoy
 
         }
 
-        public abstract void OnKeyArray(byte[] buffer);
-        public abstract void OnLTrigger(byte[] value);
-        public abstract void OnRTrigger(byte[] value);
-        public abstract void OnLeftRemote(byte[] x, byte[] y);
-        public abstract void OnRightRemote(byte[] x, byte[] y);
+        public virtual void OnKeyArray(byte[] buffer)
+        {
+
+        }
+        public virtual void OnLTrigger(byte[] value)
+        {
+
+        }
+        public virtual void OnRTrigger(byte[] value)
+        {
+
+        }
+        public virtual void OnLeftRemote(byte[] x, byte[] y)
+        {
+
+        }
+        public virtual void OnRightRemote(byte[] x, byte[] y)
+        {
+
+        }
+
+        public virtual void OnBuffer(byte[] keyBuffer, byte[] lTrigger, byte[] rTrigger, byte[] lRemoteX, byte[] lRemoteY, byte[] rRemoteX, byte[] rRemoteY)
+        {
+            OnKeyArray(keyBuffer);
+            OnLeftRemote(lRemoteX, lRemoteY);
+            OnRightRemote(rRemoteX, rRemoteY);
+            OnLTrigger(lTrigger);
+            OnRTrigger(rTrigger);
+        }
     }
 }

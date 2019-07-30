@@ -330,11 +330,7 @@ namespace TimeBoxJoy
                 //System.Diagnostics.Debug.WriteLine(HexHelper.byteToHexStr(all, all.Length));
 #endif
                 //TODO 
-                this.joyMap.OnKeyArray(_keyArray);
-                this.joyMap.OnLeftRemote(_leftX, _leftY);
-                this.joyMap.OnRightRemote(_rightX, _rightY);
-                this.joyMap.OnLTrigger(_leftTrigger);
-                this.joyMap.OnRTrigger(_rightTrigger);
+                this.joyMap.OnBuffer(_keyArray, _leftTrigger, _rightTrigger, _leftX, _leftY, _rightX, _rightY);
             }
         }
         public bool CheckConnect()

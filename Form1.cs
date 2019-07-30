@@ -108,7 +108,8 @@ namespace TimeBoxJoy
                     string text = HexHelper.byteToHexStr(buffer, 18);
                     this.ShowMsg(text);
                 };
-                joy.joyStick.SetJoyMap(new KeyBoardJoyMap());
+                //joy.joyStick.SetJoyMap(new KeyBoardJoyMap());
+                joy.joyStick.SetJoyMap(new VitualXinputJoyMap());
                 joy.joyStick.startFeed();
             }
         }
