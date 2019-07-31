@@ -3,13 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeBoxJoy.MapConfig;
 
 namespace TimeBoxJoy
 {
-    public abstract class IJoyMap
+    public abstract class IJoyMap:IDisposable
     {
-        public abstract bool Initialize(Action<Exception> FailedCallback);
         public string Name { get; set; }
+        public DefaultMapConfig config { get; set; }
+        public IJoyMap(MapConfig.DefaultMapConfig _config)
+        {
+            config = _config;
+        }
+        public abstract bool Initialize(Action<Exception> FailedCallback);
         public virtual void OnKeyArray(byte[] buffer)
         {
 
@@ -39,5 +45,7 @@ namespace TimeBoxJoy
             OnLTrigger(lTrigger);
             OnRTrigger(rTrigger);
         }
+
+        public abstract void Dispose();
     }
 }

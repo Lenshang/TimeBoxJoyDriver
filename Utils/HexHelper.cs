@@ -20,5 +20,18 @@ namespace TimeBoxJoy.Utils
             }
             return returnStr;
         }
+
+        public static byte[] getSignStr(byte[] signStr)
+        {
+            int i = 0;
+            byte b = 2;
+            while (i < signStr.Length - 1)
+            {
+                b = (byte)(b - signStr[i] & 255);
+                i++;
+            }
+            signStr[7] = b;
+            return signStr;
+        }
     }
 }

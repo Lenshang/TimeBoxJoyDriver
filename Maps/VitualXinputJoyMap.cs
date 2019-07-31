@@ -8,67 +8,40 @@ using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using Newtonsoft.Json;
+using TimeBoxJoy.MapConfig;
 using TimeBoxJoy.Utils;
 
 namespace TimeBoxJoy.Maps
 {
-    public class XInputConfig
-    {
-        public Dictionary<byte, Xbox360Buttons> Keymap { get; set; } = new Dictionary<byte, Xbox360Buttons>();
-
-        public Xbox360Axes LTrigger { get; set; } = Xbox360Axes.LeftTrigger;
-        public Xbox360Axes RTrigger { get; set; } = Xbox360Axes.RightTrigger;
-        public Xbox360Axes LeftRemoteX { get; set; } = Xbox360Axes.LeftThumbX;
-        public Xbox360Axes LeftRemoteY { get; set; } = Xbox360Axes.LeftThumbY;
-        public Xbox360Axes RightRemoteX { get; set; } = Xbox360Axes.RightThumbX;
-        public Xbox360Axes RightRemoteY { get; set; } = Xbox360Axes.RightThumbY;
-
-        public XInputConfig()
-        {
-            Keymap.Add(4, Xbox360Buttons.A);//A
-            Keymap.Add(22, Xbox360Buttons.B);//B
-            Keymap.Add(27, Xbox360Buttons.X);//x
-            Keymap.Add(29, Xbox360Buttons.Y);//y
-            Keymap.Add(26, Xbox360Buttons.LeftThumb);//L1
-            Keymap.Add(20, Xbox360Buttons.RightThumb);//R1
-
-            Keymap.Add(82, Xbox360Buttons.Up);//up
-            Keymap.Add(81, Xbox360Buttons.Down);//down
-            Keymap.Add(80, Xbox360Buttons.Left);//left
-            Keymap.Add(79, Xbox360Buttons.Right);//right
-            Keymap.Add(24, Xbox360Buttons.LeftShoulder);//back L
-            Keymap.Add(23, Xbox360Buttons.RightShoulder);//back R
-            //Keymap.Add(89, Keys.T);//Help
-            Keymap.Add(74, Xbox360Buttons.Guide);//Home
-
-            Keymap.Add(88, Xbox360Buttons.Back);//back
-            Keymap.Add(44, Xbox360Buttons.Start);//start
-            Keymap.Add(96, Xbox360Buttons.LeftShoulder);//LC
-            Keymap.Add(97, Xbox360Buttons.RightShoulder);//RC
-        }
-    }
     public class VitualXinputJoyMap : IJoyMap
     {
         ViGEmClient myViGEmClient;
         Xbox360Controller myController;
 
-        XInputConfig config;
         Xbox360Buttons[] HoldKeyCache = new Xbox360Buttons[4];
         byte[] KeyCache = new byte[10];
-        public VitualXinputJoyMap()
+        public VitualXinputJoyMap(MapConfig.DefaultMapConfig config=null):base(config)
         {
-            FileHelper fh = new FileHelper();
-            if (File.Exists("xinput.config"))
+            if (config != null)
             {
-                var str = fh.readFile("xinput.config");
-                this.config = JsonConvert.DeserializeObject<XInputConfig>(str);
+                this.config = config;
             }
             else
             {
                 this.config = new XInputConfig();
-                var str = JsonConvert.SerializeObject(this.config);
-                fh.SaveFile("xinput.config", str);
             }
+            //FileHelper fh = new FileHelper();
+            //if (File.Exists("xinput.config"))
+            //{
+            //    var str = fh.readFile("xinput.config");
+            //    this.config = JsonConvert.DeserializeObject<XInputConfig>(str);
+            //}
+            //else
+            //{
+            //    this.config = new XInputConfig();
+            //    var str = JsonConvert.SerializeObject(this.config);
+            //    fh.SaveFile("xinput.config", str);
+            //}
 
             this.Name = "Defalt XInput Map";
         }
@@ -115,14 +88,14 @@ namespace TimeBoxJoy.Maps
             Xbox360Buttons[] _holdKeyCache = new Xbox360Buttons[4];
             for (int i = 0; i < buffer.Length; i++)
             {
-                Xbox360Buttons target;
+                int target;
                 if (this.config.Keymap.TryGetValue(buffer[i], out target))
                 {
-                    if (!HoldKeyCache.Contains(target))
+                    if (!HoldKeyCache.Contains((Xbox360Buttons)target))
                     {
-                        ParseKey(target, controllerReport);
+                        ParseKey((Xbox360Buttons)target, controllerReport);
                     }
-                    _holdKeyCache[i] = target;
+                    _holdKeyCache[i] = (Xbox360Buttons)target;
                 }
 
             }
@@ -138,6 +111,7 @@ namespace TimeBoxJoy.Maps
         }
         private void ParseKey(Xbox360Buttons target, Xbox360Report controllerReport, uint dwFlags = 0)
         {
+            if ((int)target < 0) return;
             if (dwFlags == 0)
             {
                 controllerReport.SetButtonState(target, true);
@@ -149,24 +123,30 @@ namespace TimeBoxJoy.Maps
         }
         public void OnLeftRemote(byte[] x, byte[] y, Xbox360Report controllerReport)
         {
-            controllerReport.SetAxis(this.config.LeftRemoteX, getShort(x[0]));
-            controllerReport.SetAxis(this.config.LeftRemoteY, getShort(y[0],true));
+            if (this.config.LeftRemoteX >= 0)
+                controllerReport.SetAxis((Xbox360Axes)this.config.LeftRemoteX, getShort(x[0]));
+            if (this.config.LeftRemoteY >= 0)
+                controllerReport.SetAxis((Xbox360Axes)this.config.LeftRemoteY, getShort(y[0],true));
         }
 
         public void OnLTrigger(byte[] value, Xbox360Report controllerReport)
         {
-            controllerReport.SetAxis(this.config.LTrigger, value[0]);
+            if(this.config.LTrigger>=0)
+                controllerReport.SetAxis((Xbox360Axes)this.config.LTrigger, value[0]);
         }
 
         public void OnRightRemote(byte[] x, byte[] y, Xbox360Report controllerReport)
         {
-            controllerReport.SetAxis(this.config.RightRemoteX, getShort(x[0]));
-            controllerReport.SetAxis(this.config.RightRemoteY, getShort(y[0],true));
+            if(this.config.RightRemoteX>=0)
+                controllerReport.SetAxis((Xbox360Axes)this.config.RightRemoteX, getShort(x[0]));
+            if(this.config.RightRemoteY>=0)
+                controllerReport.SetAxis((Xbox360Axes)this.config.RightRemoteY, getShort(y[0],true));
         }
 
         public void OnRTrigger(byte[] value, Xbox360Report controllerReport)
         {
-            controllerReport.SetAxis(this.config.RTrigger, value[0]);
+            if (this.config.RTrigger >= 0)
+                controllerReport.SetAxis((Xbox360Axes)this.config.RTrigger, value[0]);
         }
 
         private short getShort(byte bt,bool convert=false)
@@ -175,7 +155,7 @@ namespace TimeBoxJoy.Maps
             {
                 if (bt < 0x80)
                 {
-                    bt = unchecked((byte)(bt - (bt - 0x80) * 2-1));
+                    bt = unchecked((byte)(bt - (bt - 0x80) * 2 - 1));
                 }
                 else if (bt > 0x80)
                 {
@@ -194,6 +174,13 @@ namespace TimeBoxJoy.Maps
             var s = (short)((bt - 0x80) << 8);
 
             return s;
+        }
+
+        public override void Dispose()
+        {
+            myController.Disconnect();
+            myController.Dispose();
+            myViGEmClient.Dispose();
         }
     }
 }

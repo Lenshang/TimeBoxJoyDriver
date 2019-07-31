@@ -365,7 +365,10 @@ namespace TimeBoxJoy
 
             }
         }
-
+        public void SendData(byte[] data)
+        {
+            this.peerStream.Write(data,0,data.Length);
+        }
         private byte[] getSignStr(byte[] signStr)
         {
             int i = 0;
