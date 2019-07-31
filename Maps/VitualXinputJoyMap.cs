@@ -178,9 +178,16 @@ namespace TimeBoxJoy.Maps
 
         public override void Dispose()
         {
-            myController.Disconnect();
-            myController.Dispose();
-            myViGEmClient.Dispose();
+            try
+            {
+                myController.Disconnect();
+                myController.Dispose();
+                myViGEmClient.Dispose();
+            }
+            catch
+            {
+
+            }
         }
     }
 }

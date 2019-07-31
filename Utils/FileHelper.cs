@@ -85,6 +85,9 @@ namespace TimeBoxJoy.Utils
                 }
                 content = streamReader.ReadLine();
             }
+            streamReader.Close();
+            fileStream.Close();
+
             return Result.ToArray();
         }
         /// <summary>

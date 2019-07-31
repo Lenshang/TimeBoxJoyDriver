@@ -359,6 +359,7 @@ namespace TimeBoxJoy
             {
                 this.peerStream.Dispose();
                 this.cli.Dispose();
+                this.joyMap.Dispose();
             }
             catch
             {

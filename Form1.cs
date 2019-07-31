@@ -22,52 +22,51 @@ namespace TimeBoxJoy
         List<string> Messages;
         private object locker = new object();
         private int SelectIndex = 0;
+
         public Form1()
         {
             InitializeComponent();
             //blueDeviceList = new List<BluetoothDeviceInfo>();
+            Messages = new List<string>();
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
             try
             {
-                Messages = new List<string>();
-                manager = new JoyManager();
+                manager = new JoyManager(
+                    OnJoyMessageReceive: buffer => {
+                        string text = HexHelper.byteToHexStr(buffer, buffer.Length);
+                        ShowMsg(text);
+                    },
+                    OnMessage: msg => {
+                        ShowMsg(msg);
+                    },
+                    OnJoyStateChange: joys => {
+                        this.Invoke(new Action(() => {
+                            this.listBox1.Items.Clear();
+                            foreach (var joy in joys)
+                            {
+                                this.listBox1.Items.Add(joy);
+                            }
+                            if (SelectIndex >= 0 && SelectIndex < this.listBox1.Items.Count)
+                            {
+                                this.listBox1.SetSelected(SelectIndex, true);
+                            }
+                        }));
+                    },
+                    OnStartScanDevice: () => {
+                        this.button2.Text = "扫描中......";
+                    },
+                    OnEndScanDevice: () => {
+                        this.button2.Text = "重新扫描设备";
+                    }
+                );
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 System.Environment.Exit(0);
             }
-
-        }
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            manager.OnJoyMessageReceive = buffer => {
-                string text = HexHelper.byteToHexStr(buffer, buffer.Length);
-                ShowMsg(text);
-            };
-
-            manager.OnMessage = msg => {
-                ShowMsg(msg);
-            };
-            manager.OnJoyStateChange = joys => {
-                this.Invoke(new Action(()=> {
-                    this.listBox1.Items.Clear();
-                    foreach(var joy in joys)
-                    {
-                        this.listBox1.Items.Add(joy);
-                    }
-                    if (SelectIndex >= 0 && SelectIndex < this.listBox1.Items.Count)
-                    {
-                        this.listBox1.SetSelected(SelectIndex, true);
-                    }
-                }));
-            };
-            manager.OnStartScanDevice = () =>{
-                this.button2.Text = "扫描中......";
-            };
-
-            manager.OnEndScanDevice = () => {
-                this.button2.Text = "重新扫描设备";
-            };
         }
 
         private void ShowMsg(string msg)

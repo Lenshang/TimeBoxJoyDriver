@@ -1,4 +1,5 @@
-﻿using InTheHand.Net.Bluetooth;
+﻿using InTheHand.Net;
+using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 using System;
 using System.Collections.Generic;
@@ -18,19 +19,30 @@ namespace TimeBoxJoy
         private BluetoothComponent blueComponent;
         private BluetoothClient blueClient;
         private DateTime startScan = DateTime.Now;
-        List<string> Messages = new List<string>();
-        private object locker = new object();
         public TimeSpan ScanBlueTimeOut = TimeSpan.FromSeconds(30);
         public int State = 0;//0=STOP,1=SCANNING
 
+        public List<string> rememberMac { get; set; }
         public List<DefaultMapConfig> mapConfigs { get; set; }
         public Action<List<BTDeviceInfo>> OnJoyStateChange { get; set; } = null;
         public Action<Byte[]> OnJoyMessageReceive { get; set; } = null;
         public Action<string> OnMessage { get; set; } = null;
         public Action OnStartScanDevice { get; set; } = null;
         public Action OnEndScanDevice { get; set; } = null;
-        public JoyManager()
+        public JoyManager(
+                    Action<List<BTDeviceInfo>> OnJoyStateChange=null, 
+                    Action<Byte[]> OnJoyMessageReceive=null, 
+                    Action<string> OnMessage=null,
+                    Action OnStartScanDevice=null,
+                    Action OnEndScanDevice=null)
         {
+            timeBoxJoyList = new List<BTDeviceInfo>();
+            this.OnJoyStateChange = OnJoyStateChange;
+            this.OnJoyMessageReceive = OnJoyMessageReceive;
+            this.OnMessage = OnMessage;
+            this.OnStartScanDevice = OnStartScanDevice;
+            this.OnEndScanDevice = OnEndScanDevice;
+
             //读取所有配置文件
             mapConfigs = new List<DefaultMapConfig>();
             if (!Directory.Exists("maps"))
@@ -39,19 +51,51 @@ namespace TimeBoxJoy
             }
             mapConfigs.Add(new KeyBoardConfig());
             mapConfigs.Add(new XInputConfig());
-            foreach(var file in Directory.GetFiles("maps"))
+            foreach (var file in Directory.GetFiles("maps"))
             {
-                var _config=DefaultMapConfig.GetConfig(file);
+                var _config = DefaultMapConfig.GetConfig(file);
                 //FileInfo finfo = new FileInfo(file);
                 _config.Name = System.IO.Path.GetFileNameWithoutExtension(file);
-                if (!mapConfigs.Any(p=> p.Name== _config.Name))
+                if (!mapConfigs.Any(p => p.Name == _config.Name))
                 {
                     mapConfigs.Add(_config);
                 }
             }
 
+            //读取已记忆的MAC设备
+            rememberMac = new List<string>();
+            if (File.Exists("remember.txt"))
+            {
+                FileHelper fh = new FileHelper();
+                foreach(var addr in fh.readFileLine("remember.txt"))
+                {
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(addr))
+                        {
+                            if (addr.Contains(":"))
+                            {
+                                string macAddr = addr.Split(':')[0];
+                                string configName= addr.Split(':')[1];
+                                rememberMac.Add(addr);
+                                BluetoothAddress address = BluetoothAddress.Parse(macAddr);
+                                BluetoothDeviceInfo info = new BluetoothDeviceInfo(address);
+                                var btDevice = new BTDeviceInfo(info);
+                                btDevice.State = deviceState.LOST;
+                                btDevice.mapConfig = mapConfigs.Where(i => i.Name == configName).FirstOrDefault();
+                                this.timeBoxJoyList.Add(btDevice);
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                this.OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+            }
+
             //初始化蓝牙设备
-            timeBoxJoyList = new List<BTDeviceInfo>();
             blueClient = new BluetoothClient();
             blueComponent = new BluetoothComponent(blueClient);
             blueComponent.DiscoverDevicesProgress += (sender, e) => {
@@ -97,7 +141,8 @@ namespace TimeBoxJoy
         }
         private void ConnectJoy(BTDeviceInfo joy)
         {
-            JoyStick joyst = new JoyStick(joy.bluetoothDeviceInfo.DeviceAddress.ToString());
+            string addr = joy.bluetoothDeviceInfo.DeviceAddress.ToString();
+            JoyStick joyst = new JoyStick(addr);
             joy.joyStick = joyst;
             if (joy.joyStick.StartConnect(0))
             {
@@ -110,8 +155,13 @@ namespace TimeBoxJoy
                 };
                 //joy.joyStick.SetJoyMap(new KeyBoardJoyMap());
 
-                joy.SetJoyMap(this);
+                joy.SetJoyMap(this,joy.mapConfig);
                 joy.joyStick.startFeed();
+
+                this.rememberMac.Remove(addr);
+                this.rememberMac.Add(addr+":"+ joy.mapConfig.Name);
+                FileHelper fh = new FileHelper();
+                fh.SaveFile("remember.txt", string.Join("\r\n", this.rememberMac));
             }
         }
         /// <summary>
@@ -127,6 +177,7 @@ namespace TimeBoxJoy
                     if (!joy.joyStick.CheckConnect())
                     {
                         joy.State = deviceState.LOST;
+                        joy.joyMap.Dispose();
                         OnJoyStateChange?.Invoke(this.timeBoxJoyList);
                     }
                 }
@@ -186,13 +237,13 @@ namespace TimeBoxJoy
             var joy = this.timeBoxJoyList.Skip(index).FirstOrDefault();
             return joy;
         }
-        int _led = 0;
+        int _led = 1;
         public void ChangeLed(int index)
         {
             var joy = GetDevice(index);
             if (joy != null)
             {
-                int led = _led++ > 4 ? _led = 1: _led;
+                int led = _led++ > 3 ? _led = 1: _led;
                 //int led = _led++;
                 byte[] secret = new byte[]{
                     3,
