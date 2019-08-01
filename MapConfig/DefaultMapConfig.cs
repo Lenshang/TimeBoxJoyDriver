@@ -13,7 +13,8 @@ namespace TimeBoxJoy.MapConfig
     public enum MapType
     {
         KEYBOARD=0,
-        XINPUT=1
+        XINPUT=1,
+        MIX=2
     }
     public class DefaultMapConfig
     {

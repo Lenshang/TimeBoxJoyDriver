@@ -17,18 +17,6 @@ namespace TimeBoxJoy.Maps
         //KeyBoardConfig config;
         public KeyBoardJoyMap(MapConfig.DefaultMapConfig config = null) : base(config)
         {
-            //FileHelper fh = new FileHelper();
-            //if (File.Exists("kbmap.config"))
-            //{
-            //    var str=fh.readFile("kbmap.config");
-            //    this.config = JsonConvert.DeserializeObject<KeyBoardConfig>(str);
-            //}
-            //else
-            //{
-            //    this.config = new KeyBoardConfig();
-            //    var str = JsonConvert.SerializeObject(this.config);
-            //    fh.SaveFile("kbmap.config", str);
-            //}
             if (config != null)
             {
                 this.config = config;

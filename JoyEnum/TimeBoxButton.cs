@@ -27,6 +27,7 @@ namespace TimeBoxJoy.JoyEnum
         START=44,
         LSBUTTON=96,
         RSBUTTON=97,
-        NONE=-1
+        NONE=0,
+        AxesNone=-1
     }
 }

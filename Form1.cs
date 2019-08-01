@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TimeBoxJoy.JoyEnum;
 using TimeBoxJoy.Maps;
 using TimeBoxJoy.Utils;
 
@@ -112,6 +113,7 @@ namespace TimeBoxJoy
                 {
                     MapEdit mForm = new MapEdit(this.manager, this.manager.mapConfigs, device);
                     mForm.ShowDialog();
+                    mForm.Dispose();
                 }
                 else
                 {

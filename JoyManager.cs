@@ -51,6 +51,7 @@ namespace TimeBoxJoy
             }
             mapConfigs.Add(new KeyBoardConfig());
             mapConfigs.Add(new XInputConfig());
+            mapConfigs.Add(new MixModeConfig());
             foreach (var file in Directory.GetFiles("maps"))
             {
                 var _config = DefaultMapConfig.GetConfig(file);
@@ -71,21 +72,27 @@ namespace TimeBoxJoy
                 {
                     try
                     {
-                        if (!string.IsNullOrWhiteSpace(addr))
+                        if (string.IsNullOrWhiteSpace(addr))
                         {
-                            if (addr.Contains(":"))
-                            {
-                                string macAddr = addr.Split(':')[0];
-                                string configName= addr.Split(':')[1];
-                                rememberMac.Add(addr);
-                                BluetoothAddress address = BluetoothAddress.Parse(macAddr);
-                                BluetoothDeviceInfo info = new BluetoothDeviceInfo(address);
-                                var btDevice = new BTDeviceInfo(info);
-                                btDevice.State = deviceState.LOST;
-                                btDevice.mapConfig = mapConfigs.Where(i => i.Name == configName).FirstOrDefault();
-                                this.timeBoxJoyList.Add(btDevice);
-                            }
+                            continue;
                         }
+                        if (!addr.Contains(":"))
+                        {
+                            continue;
+                        }
+                        string macAddr = addr.Split(':')[0];
+                        string configName = addr.Split(':')[1];
+                        if (rememberMac.Contains(macAddr))
+                        {
+                            continue;
+                        }
+                        rememberMac.Add(macAddr);
+                        BluetoothAddress address = BluetoothAddress.Parse(macAddr);
+                        BluetoothDeviceInfo info = new BluetoothDeviceInfo(address);
+                        var btDevice = new BTDeviceInfo(info);
+                        btDevice.State = deviceState.LOST;
+                        btDevice.mapConfig = mapConfigs.Where(i => i.Name == configName).FirstOrDefault();
+                        this.timeBoxJoyList.Add(btDevice);
                     }
                     catch
                     {

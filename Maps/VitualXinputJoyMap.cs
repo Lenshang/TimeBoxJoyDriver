@@ -19,6 +19,7 @@ namespace TimeBoxJoy.Maps
         Xbox360Controller myController;
 
         Xbox360Buttons[] HoldKeyCache = new Xbox360Buttons[4];
+        Xbox360Buttons[] _holdKeyCache = new Xbox360Buttons[4];
         byte[] KeyCache = new byte[10];
         public VitualXinputJoyMap(MapConfig.DefaultMapConfig config=null):base(config)
         {
@@ -30,18 +31,6 @@ namespace TimeBoxJoy.Maps
             {
                 this.config = new XInputConfig();
             }
-            //FileHelper fh = new FileHelper();
-            //if (File.Exists("xinput.config"))
-            //{
-            //    var str = fh.readFile("xinput.config");
-            //    this.config = JsonConvert.DeserializeObject<XInputConfig>(str);
-            //}
-            //else
-            //{
-            //    this.config = new XInputConfig();
-            //    var str = JsonConvert.SerializeObject(this.config);
-            //    fh.SaveFile("xinput.config", str);
-            //}
 
             this.Name = "Defalt XInput Map";
         }
@@ -85,7 +74,10 @@ namespace TimeBoxJoy.Maps
         }
         public void OnKeyArray(byte[] buffer, Xbox360Report controllerReport)
         {
-            Xbox360Buttons[] _holdKeyCache = new Xbox360Buttons[4];
+            _holdKeyCache[0] = 0;
+            _holdKeyCache[1] = 0;
+            _holdKeyCache[2] = 0;
+            _holdKeyCache[3] = 0;
             for (int i = 0; i < buffer.Length; i++)
             {
                 int target;
@@ -106,7 +98,8 @@ namespace TimeBoxJoy.Maps
                     ParseKey(_hk, controllerReport, 2);
                 }
             }
-            controllerReport.SetButtons(_holdKeyCache);
+
+            controllerReport.SetButtons(_holdKeyCache.Where(k=>k>0).ToArray());
             HoldKeyCache = _holdKeyCache;
         }
         private void ParseKey(Xbox360Buttons target, Xbox360Report controllerReport, uint dwFlags = 0)
@@ -126,7 +119,7 @@ namespace TimeBoxJoy.Maps
             if (this.config.LeftRemoteX >= 0)
                 controllerReport.SetAxis((Xbox360Axes)this.config.LeftRemoteX, getShort(x[0]));
             if (this.config.LeftRemoteY >= 0)
-                controllerReport.SetAxis((Xbox360Axes)this.config.LeftRemoteY, getShort(y[0],true));
+                controllerReport.SetAxis((Xbox360Axes)this.config.LeftRemoteY, getShort(y[0], true));
         }
 
         public void OnLTrigger(byte[] value, Xbox360Report controllerReport)

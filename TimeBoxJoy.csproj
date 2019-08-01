@@ -66,6 +66,9 @@
     <ApplicationIcon>1.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClearScript, Version=5.5.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.ClearScript.5.5.6\lib\net45\ClearScript.dll</HintPath>
+    </Reference>
     <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
       <Private>False</Private>
@@ -105,10 +108,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="JoyEnum\ButtonEnumModel.cs" />
     <Compile Include="JoyEnum\TimeBoxButton.cs" />
     <Compile Include="JoyManager.cs" />
     <Compile Include="MapConfig\DefaultMapConfig.cs" />
     <Compile Include="MapConfig\KeyBoardConfig.cs" />
+    <Compile Include="MapConfig\MixModeConfig.cs" />
     <Compile Include="MapConfig\XInputConfig.cs" />
     <Compile Include="MapEdit.cs">
       <SubType>Form</SubType>
@@ -119,6 +124,7 @@
     <Compile Include="Maps\IJoyMap.cs" />
     <Compile Include="JoyStick.cs" />
     <Compile Include="Maps\KeyBoardJoyMap.cs" />
+    <Compile Include="Maps\MixModeJoyMap.cs" />
     <Compile Include="Maps\VitualXinputJoyMap.cs" />
     <Compile Include="NewMap.cs">
       <SubType>Form</SubType>
@@ -190,6 +196,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('packages\Fody.2.2.0\build\net452\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.2.2.0\build\net452\Fody.targets'))" />
     <Error Condition="!Exists('packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.ClearScript.5.5.6\build\Microsoft.ClearScript.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ClearScript.5.5.6\build\Microsoft.ClearScript.targets'))" />
   </Target>
   <Import Project="packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
+  <Import Project="packages\Microsoft.ClearScript.5.5.6\build\Microsoft.ClearScript.targets" Condition="Exists('packages\Microsoft.ClearScript.5.5.6\build\Microsoft.ClearScript.targets')" />
 </Project>

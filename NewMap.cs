@@ -40,9 +40,13 @@ namespace TimeBoxJoy
             {
                 config = new KeyBoardConfig();
             }
-            else
+            else if (this.comboBox1.SelectedIndex == 1)
             {
                 config = new XInputConfig();
+            }
+            else
+            {
+                config = new MixModeConfig();
             }
             config.Name = textBox1.Text;
             this.OnSuccess(config);

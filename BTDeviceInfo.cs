@@ -65,6 +65,21 @@ namespace TimeBoxJoy
                         }
                         this.joyStick.SetJoyMap(this.joyMap);
                         return;
+                    case MapType.MIX:
+                        if (this.joyMap != null)
+                        {
+                            this.joyMap.Dispose();
+                        }
+                        this.mapConfig = config;
+                        this.joyMap = new MixModeJoyMap(config);
+                        if (!this.joyMap.Initialize(ex => {
+                            manager.WriteLog(ex.Message + "\r\n已切换回键盘映射模式");
+                        }))
+                        {
+                            map = new KeyBoardJoyMap();
+                        }
+                        this.joyStick.SetJoyMap(this.joyMap);
+                        return;
                 }
             }
 

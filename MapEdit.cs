@@ -21,12 +21,23 @@ namespace TimeBoxJoy
         JoyManager manager { get; set; }
         List<DefaultMapConfig> configs { get; set; }
         BTDeviceInfo device { get; set; }
+        List<Xbox360Buttons> allXinputBtEnum { get; set; }
+        List<Xbox360Axes> allXinputAxesEnum { get; set; }
+        List<Keys> allKeysEnum { get; set; }
+        List<ButtonEnumModel> allMixBt { get; set; }
         public MapEdit(JoyManager _manager,List<DefaultMapConfig> _configs, BTDeviceInfo _device)
         {
             InitializeComponent();
             this.manager = _manager;
             this.configs = _configs;
             this.device = _device;
+            allXinputBtEnum = GetEnumArray<Xbox360Buttons>();
+            allXinputAxesEnum = GetEnumArray<Xbox360Axes>();
+            allKeysEnum = GetEnumArray<Keys>();
+            allMixBt = new List<ButtonEnumModel>();
+            allMixBt.AddRange(this.allXinputBtEnum.Select(i => new ButtonEnumModel("Xinput:" + i.ToString(), (int)i, 65535)));
+            allMixBt.AddRange(this.allKeysEnum.Select(i => new ButtonEnumModel("键盘:" + i.ToString(), (int)i)));
+            allMixBt.Add(new ButtonEnumModel("未设定", (int)TimeBoxButton.NONE));
         }
 
         private void MapEdit_Load(object sender, EventArgs e)
@@ -78,6 +89,11 @@ namespace TimeBoxJoy
                     SetKeyboardDefault();
                     BindKeyBoard(config);
                 }
+                else if (config.MapType == MapType.MIX)
+                {
+                    SetMixModeDefault();
+                    BindMixMode(config);
+                }
             }
         }
 
@@ -96,8 +112,8 @@ namespace TimeBoxJoy
             cbLSY.Enabled = true;
             cbRSX.Enabled = true;
             cbRSY.Enabled = true;
-            var btList = GetEnumArray<Xbox360Buttons>().Select(i => (object)i).ToList();
-            btList.Add((Object)TimeBoxButton.NONE);
+            var btList = allXinputBtEnum.Select(i => new ButtonEnumModel(i.ToString(),(int)i)).ToList();
+            btList.Add(new ButtonEnumModel("未设定",(int)TimeBoxButton.NONE));
             var bts = btList.ToArray();
             cbA.Items.AddRange(bts);
             cbB.Items.AddRange(bts);
@@ -122,8 +138,8 @@ namespace TimeBoxJoy
             cbRight.Items.AddRange(bts);
             cbLSB.Items.AddRange(bts);
             cbRSB.Items.AddRange(bts);
-            var axeList = GetEnumArray<Xbox360Axes>().Select(i => (object)i).ToList();
-            axeList.Add(TimeBoxButton.NONE);
+            var axeList = allXinputAxesEnum.Select(i => new ButtonEnumModel(i.ToString(), (int)i)).ToList();
+            axeList.Add(new ButtonEnumModel("未设定", (int)TimeBoxButton.AxesNone));
             var axes = axeList.ToArray();
 
             cbLT.Items.AddRange(axes);
@@ -149,7 +165,7 @@ namespace TimeBoxJoy
             cbRSX.Enabled = false;
             cbRSY.Enabled = false;
 
-            var bts = GetEnumArray<Keys>().Select(i => (object)i).ToArray();
+            var bts = allKeysEnum.Select(i => new ButtonEnumModel(i.ToString(), (int)i)).ToArray();
             cbA.Items.AddRange(bts);
             cbB.Items.AddRange(bts);
             cbX.Items.AddRange(bts);
@@ -185,127 +201,210 @@ namespace TimeBoxJoy
             cbLSB.Items.AddRange(bts);
             cbRSB.Items.AddRange(bts);
         }
+        private void SetMixModeDefault()
+        {
+            ClearComboBox();
+            cbLSUp.Enabled = false;
+            cbLSDown.Enabled = false;
+            cbLSLeft.Enabled = false;
+            cbLSRight.Enabled = false;
+            cbRSUp.Enabled = false;
+            cbRSDown.Enabled = false;
+            cbRSLeft.Enabled = false;
+            cbRSRight.Enabled = false;
+            cbLSX.Enabled = true;
+            cbLSY.Enabled = true;
+            cbRSX.Enabled = true;
+            cbRSY.Enabled = true;
 
+            cbA.Items.AddRange(allMixBt.ToArray());
+            cbB.Items.AddRange(allMixBt.ToArray());
+            cbX.Items.AddRange(allMixBt.ToArray());
+            cbY.Items.AddRange(allMixBt.ToArray());
+
+            cbBack.Items.AddRange(allMixBt.ToArray());
+            cbStart.Items.AddRange(allMixBt.ToArray());
+
+            cbBackL.Items.AddRange(allMixBt.ToArray());
+            cbBackR.Items.AddRange(allMixBt.ToArray());
+
+            cbHelp.Items.AddRange(allMixBt.ToArray());
+            cbHome.Items.AddRange(allMixBt.ToArray());
+
+            cbLB.Items.AddRange(allMixBt.ToArray());
+            cbRB.Items.AddRange(allMixBt.ToArray());
+
+            cbUp.Items.AddRange(allMixBt.ToArray());
+            cbDown.Items.AddRange(allMixBt.ToArray());
+            cbLeft.Items.AddRange(allMixBt.ToArray());
+            cbRight.Items.AddRange(allMixBt.ToArray());
+            cbLSB.Items.AddRange(allMixBt.ToArray());
+            cbRSB.Items.AddRange(allMixBt.ToArray());
+
+            var axeList = allXinputAxesEnum.Select(i => new ButtonEnumModel("Xinput:"+i.ToString(), (int)i,65535)).ToList();
+            axeList.Add(new ButtonEnumModel("未设定", (int)TimeBoxButton.AxesNone));
+            var axes = axeList.ToArray();
+
+            cbLT.Items.AddRange(axes);
+            cbRT.Items.AddRange(axes);
+            cbLSX.Items.AddRange(axes);
+            cbLSY.Items.AddRange(axes);
+            cbRSX.Items.AddRange(axes);
+            cbRSY.Items.AddRange(axes);
+        }
         private void BindXinput(DefaultMapConfig config)
         {
-            cbA.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.A];
-            cbB.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.B];
-            cbX.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.X];
-            cbY.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.Y];
+            cbA.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.A]);
+            cbB.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.B]);
+            cbX.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.X]);
+            cbY.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.Y]);
 
-            cbBack.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.BACK];
-            cbStart.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.START];
+            cbBack.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.BACK]);
+            cbStart.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.START]);
 
-            cbBackL.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.LBACK];
-            cbBackR.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.RBACK];
+            cbBackL.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.LBACK]);
+            cbBackR.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.RBACK]);
 
-            cbHelp.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.HELP];
-            cbHome.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.HOME];
+            cbHelp.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.HELP]);
+            cbHome.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.HOME]);
 
-            cbLB.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.LB];
-            cbRB.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.RB];
+            cbLB.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.LB]);
+            cbRB.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.RB]);
 
-            cbUp.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.UP];
-            cbDown.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.DOWN];
-            cbLeft.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.LEFT];
-            cbRight.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.RIGHT];
+            cbUp.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.UP]);
+            cbDown.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.DOWN]);
+            cbLeft.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.LEFT]);
+            cbRight.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.RIGHT]);
 
-            cbLT.SelectedItem = (Xbox360Axes)config.LTrigger;
-            cbRT.SelectedItem = (Xbox360Axes)config.RTrigger;
-            cbLSX.SelectedItem = (Xbox360Axes)config.LeftRemoteX;
-            cbLSY.SelectedItem = (Xbox360Axes)config.LeftRemoteY;
-            cbRSX.SelectedItem = (Xbox360Axes)config.RightRemoteX;
-            cbRSY.SelectedItem = (Xbox360Axes)config.RightRemoteY;
+            cbLT.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)config.LTrigger);
+            cbRT.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)config.RTrigger);
+            cbLSX.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)config.LeftRemoteX);
+            cbLSY.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)config.LeftRemoteY);
+            cbRSX.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)config.RightRemoteX);
+            cbRSY.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)config.RightRemoteY);
 
-            cbLSB.SelectedItem= (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.LSBUTTON];
-            cbRSB.SelectedItem = (Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.RSBUTTON];
+            cbLSB.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.LSBUTTON]);
+            cbRSB.SelectedIndex = this.allXinputBtEnum.IndexOf((Xbox360Buttons)config.Keymap[(byte)TimeBoxButton.RSBUTTON]);
         }
         private void BindKeyBoard(DefaultMapConfig config)
         {
-            cbA.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.A];
-            cbB.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.B];
-            cbX.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.X];
-            cbY.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.Y];
+            cbA.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.A]);
+            cbB.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.B]);
+            cbX.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.X]);
+            cbY.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.Y]);
 
-            cbBack.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.BACK];
-            cbStart.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.START];
+            cbBack.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.BACK]);
+            cbStart.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.START]);
 
-            cbBackL.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.LBACK];
-            cbBackR.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.RBACK];
+            cbBackL.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.LBACK]);
+            cbBackR.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.RBACK]);
 
-            cbHelp.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.HELP];
-            cbHome.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.HOME];
+            cbHelp.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.HELP]);
+            cbHome.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.HOME]);
 
-            cbLB.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.LB];
-            cbRB.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.RB];
+            cbLB.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.LB]);
+            cbRB.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.RB]);
 
-            cbUp.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.UP];
-            cbDown.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.DOWN];
-            cbLeft.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.LEFT];
-            cbRight.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.RIGHT];
+            cbUp.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.UP]);
+            cbDown.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.DOWN]);
+            cbLeft.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.LEFT]);
+            cbRight.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.RIGHT]);
 
-            cbLT.SelectedItem = (Keys)config.LTrigger;
-            cbRT.SelectedItem = (Keys)config.RTrigger;
+            cbLT.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.LTrigger);
+            cbRT.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.RTrigger);
 
-            cbLSUp.SelectedItem = (Keys)config.LeftRemoteUp;
-            cbLSDown.SelectedItem = (Keys)config.LeftRemoteDown;
-            cbLSLeft.SelectedItem = (Keys)config.LeftRemoteLeft;
-            cbLSRight.SelectedItem = (Keys)config.LeftRemoteRight;
+            cbLSUp.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.LeftRemoteUp);
+            cbLSDown.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.LeftRemoteDown);
+            cbLSLeft.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.LeftRemoteLeft);
+            cbLSRight.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.LeftRemoteRight);
 
-            cbRSUp.SelectedItem = (Keys)config.RightRemoteUp;
-            cbRSDown.SelectedItem = (Keys)config.RightRemoteDown;
-            cbRSLeft.SelectedItem = (Keys)config.RightRemoteLeft;
-            cbRSRight.SelectedItem = (Keys)config.RightRemoteRight;
+            cbRSUp.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.RightRemoteUp);
+            cbRSDown.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.RightRemoteDown);
+            cbRSLeft.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.RightRemoteLeft);
+            cbRSRight.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.RightRemoteRight);
 
-            cbLSB.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.LSBUTTON];
-            cbRSB.SelectedItem = (Keys)config.Keymap[(byte)TimeBoxButton.RSBUTTON];
+            cbLSB.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.LSBUTTON]);
+            cbRSB.SelectedIndex = this.allKeysEnum.IndexOf((Keys)config.Keymap[(byte)TimeBoxButton.RSBUTTON]);
         }
+        private void BindMixMode(DefaultMapConfig config)
+        {
+            cbA.SelectedIndex = this.allMixBt.FindIndex(i=>i.ToInt()== config.Keymap[(byte)TimeBoxButton.A]);
+            cbB.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.B]);
+            cbX.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.X]);
+            cbY.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.Y]);
 
+            cbBack.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.BACK]);
+            cbStart.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.START]);
+
+            cbBackL.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.LBACK]);
+            cbBackR.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.RBACK]);
+
+            cbHelp.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.HELP]);
+            cbHome.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.HOME]);
+
+            cbLB.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.LB]);
+            cbRB.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.RB]);
+
+            cbUp.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.UP]);
+            cbDown.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.DOWN]);
+            cbLeft.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.LEFT]);
+            cbRight.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.RIGHT]);
+
+            cbLT.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)(config.LTrigger-65535));
+            cbRT.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)(config.RTrigger - 65535));
+            cbLSX.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)(config.LeftRemoteX - 65535));
+            cbLSY.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)(config.LeftRemoteY - 65535));
+            cbRSX.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)(config.RightRemoteX - 65535));
+            cbRSY.SelectedIndex = this.allXinputAxesEnum.IndexOf((Xbox360Axes)(config.RightRemoteY - 65535));
+
+            cbLSB.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.LSBUTTON]);
+            cbRSB.SelectedIndex = this.allMixBt.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.RSBUTTON]);
+        }
         /// <summary>
         /// 反向绑定当前设置到Config
         /// </summary>
         /// <param name="config"></param>
         private void BindToConfig(DefaultMapConfig config)
         {
-            config.Keymap[(byte)TimeBoxButton.A] = Convert.ToInt32(cbA.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.B] = Convert.ToInt32(cbB.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.X] = Convert.ToInt32(cbX.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.Y] = Convert.ToInt32(cbY.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.BACK] = Convert.ToInt32(cbBack.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.START] = Convert.ToInt32(cbStart.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.LBACK] = Convert.ToInt32(cbBackL.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.RBACK] = Convert.ToInt32(cbBackR.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.A] = GetKeyValue(cbA.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.B] = GetKeyValue(cbB.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.X] = GetKeyValue(cbX.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.Y] = GetKeyValue(cbY.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.BACK] = GetKeyValue(cbBack.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.START] = GetKeyValue(cbStart.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.LBACK] = GetKeyValue(cbBackL.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.RBACK] = GetKeyValue(cbBackR.SelectedItem);
 
-            config.Keymap[(byte)TimeBoxButton.HELP] = Convert.ToInt32(cbHelp.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.HOME] = Convert.ToInt32(cbHome.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.HELP] = GetKeyValue(cbHelp.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.HOME] = GetKeyValue(cbHome.SelectedItem);
 
-            config.Keymap[(byte)TimeBoxButton.LB] = Convert.ToInt32(cbLB.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.RB] = Convert.ToInt32(cbRB.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.LB] = GetKeyValue(cbLB.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.RB] = GetKeyValue(cbRB.SelectedItem);
 
-            config.Keymap[(byte)TimeBoxButton.UP] = Convert.ToInt32(cbUp.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.DOWN] = Convert.ToInt32(cbDown.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.LEFT] = Convert.ToInt32(cbLeft.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.RIGHT] = Convert.ToInt32(cbRight.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.UP] = GetKeyValue(cbUp.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.DOWN] = GetKeyValue(cbDown.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.LEFT] = GetKeyValue(cbLeft.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.RIGHT] = GetKeyValue(cbRight.SelectedItem);
 
-            config.Keymap[(byte)TimeBoxButton.LSBUTTON] = Convert.ToInt32(cbLSB.SelectedItem);
-            config.Keymap[(byte)TimeBoxButton.RSBUTTON] = Convert.ToInt32(cbRSB.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.LSBUTTON] = GetKeyValue(cbLSB.SelectedItem);
+            config.Keymap[(byte)TimeBoxButton.RSBUTTON] = GetKeyValue(cbRSB.SelectedItem);
 
-            config.LeftRemoteX = Convert.ToInt32(cbLSX.SelectedItem);
-            config.LeftRemoteY = Convert.ToInt32(cbLSY.SelectedItem);
-            config.RightRemoteX = Convert.ToInt32(cbRSX.SelectedItem);
-            config.RightRemoteY = Convert.ToInt32(cbRSY.SelectedItem);
-            config.LTrigger= Convert.ToInt32(cbLT.SelectedItem);
-            config.RTrigger = Convert.ToInt32(cbRT.SelectedItem);
+            config.LeftRemoteX = cbLSX.SelectedIndex==-1?-1: GetKeyValue(cbLSX.SelectedItem);
+            config.LeftRemoteY = cbLSY.SelectedIndex == -1 ? -1 : GetKeyValue(cbLSY.SelectedItem);
+            config.RightRemoteX = cbRSX.SelectedIndex == -1 ? -1 : GetKeyValue(cbRSX.SelectedItem);
+            config.RightRemoteY = cbRSY.SelectedIndex == -1 ? -1 : GetKeyValue(cbRSY.SelectedItem);
+            config.LTrigger= cbLT.SelectedIndex == -1 ? -1 : GetKeyValue(cbLT.SelectedItem);
+            config.RTrigger = cbRT.SelectedIndex == -1 ? -1 : GetKeyValue(cbRT.SelectedItem);
 
-            config.LeftRemoteUp= Convert.ToInt32(cbLSUp.SelectedItem);
-            config.LeftRemoteDown = Convert.ToInt32(cbLSDown.SelectedItem);
-            config.LeftRemoteLeft = Convert.ToInt32(cbLSLeft.SelectedItem);
-            config.LeftRemoteRight = Convert.ToInt32(cbLSRight.SelectedItem);
+            config.LeftRemoteUp= GetKeyValue(cbLSUp.SelectedItem);
+            config.LeftRemoteDown = GetKeyValue(cbLSDown.SelectedItem);
+            config.LeftRemoteLeft = GetKeyValue(cbLSLeft.SelectedItem);
+            config.LeftRemoteRight = GetKeyValue(cbLSRight.SelectedItem);
 
-            config.RightRemoteUp = Convert.ToInt32(cbRSUp.SelectedItem);
-            config.RightRemoteDown = Convert.ToInt32(cbRSDown.SelectedItem);
-            config.RightRemoteLeft = Convert.ToInt32(cbRSLeft.SelectedItem);
-            config.RightRemoteRight = Convert.ToInt32(cbRSRight.SelectedItem);
+            config.RightRemoteUp = GetKeyValue(cbRSUp.SelectedItem);
+            config.RightRemoteDown = GetKeyValue(cbRSDown.SelectedItem);
+            config.RightRemoteLeft = GetKeyValue(cbRSLeft.SelectedItem);
+            config.RightRemoteRight = GetKeyValue(cbRSRight.SelectedItem);
         }
         private void ClearComboBox()
         {
@@ -350,16 +449,21 @@ namespace TimeBoxJoy
             cbLSB.Items.Clear();
             cbRSB.Items.Clear();
         }
-        private T[] GetEnumArray<T>()
+        private List<T> GetEnumArray<T>()
         {
             List<T> r = new List<T>();
             foreach(var item in Enum.GetValues(typeof(T)))
             {
                 r.Add((T)item);
             }
-            return r.ToArray();
+            return r;
         }
-
+        private int GetKeyValue(object item)
+        {
+            if(item!=null)
+                return ((ButtonEnumModel)item).ToInt();
+            return 0;
+        }
         private void Button2_Click(object sender, EventArgs e)
         {
             NewMap newmap = new NewMap(config=> {

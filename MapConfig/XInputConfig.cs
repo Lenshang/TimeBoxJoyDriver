@@ -7,7 +7,7 @@ using Nefarius.ViGEm.Client.Targets.Xbox360;
 
 namespace TimeBoxJoy.MapConfig
 {
-    class XInputConfig : DefaultMapConfig
+    public class XInputConfig : DefaultMapConfig
     {
         public XInputConfig()
         {
