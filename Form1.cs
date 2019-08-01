@@ -96,7 +96,7 @@ namespace TimeBoxJoy
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            System.Environment.Exit(0);
+           
         }
 
         private void Button3_Click(object sender, EventArgs e)
@@ -130,6 +130,32 @@ namespace TimeBoxJoy
         private void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.SelectIndex = listBox1.SelectedIndex;
+        }
+
+        private void 退出ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Environment.Exit(0);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            this.Hide();
+            this.Visible = false;
+            this.notifyIcon1.BalloonTipText = "程序依然在运行喵~";
+            this.notifyIcon1.ShowBalloonTip(5);
+        }
+
+        private void NotifyIcon1_DoubleClick(object sender, EventArgs e)
+        {
+            this.Show();
+            this.Visible = true;
+        }
+
+        private void 显示ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.Visible = true;
         }
     }
 }

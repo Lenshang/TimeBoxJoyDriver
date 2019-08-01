@@ -508,9 +508,12 @@
             this.Controls.Add(this.cbConfigList);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.panel1);
+            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(871, 538);
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(871, 538);
             this.Name = "MapEdit";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "MapEdit";
             this.Load += new System.EventHandler(this.MapEdit_Load);
             this.panel1.ResumeLayout(false);

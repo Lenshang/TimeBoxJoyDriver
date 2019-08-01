@@ -105,10 +105,11 @@ namespace TimeBoxJoy
             //初始化蓝牙设备
             blueClient = new BluetoothClient();
             blueComponent = new BluetoothComponent(blueClient);
+            string name = "timebox";
             blueComponent.DiscoverDevicesProgress += (sender, e) => {
                 foreach (var device in e.Devices)
                 {
-                    if (device.DeviceName == "timebox" && !this.timeBoxJoyList.Any(p => p.bluetoothDeviceInfo.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
+                    if (device.DeviceName == name && !this.timeBoxJoyList.Any(p => p.bluetoothDeviceInfo.DeviceAddress.ToString() == device.DeviceAddress.ToString()))
                     {
                         this.timeBoxJoyList.Add(new BTDeviceInfo(device));
                     }
@@ -118,7 +119,7 @@ namespace TimeBoxJoy
             blueComponent.DiscoverDevicesComplete += (sender, e) => {
                 if ((DateTime.Now - startScan) < ScanBlueTimeOut)
                 {
-                    blueComponent.DiscoverDevicesAsync(255, true, true, false, true, null);
+                    blueComponent.DiscoverDevicesAsync(30, true, true, true, true, null);
                 }
                 else
                 {

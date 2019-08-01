@@ -93,7 +93,12 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.textBox1);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(270, 167);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(270, 167);
             this.Name = "NewMap";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "NewMap";
             this.Load += new System.EventHandler(this.NewMap_Load);
             this.ResumeLayout(false);
