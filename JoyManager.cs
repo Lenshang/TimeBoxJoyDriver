@@ -237,6 +237,10 @@ namespace TimeBoxJoy
                     joy.joyStick.Disconnect();
                     OnJoyStateChange?.Invoke(this.timeBoxJoyList);
                 }
+                var addr = joy.bluetoothDeviceInfo.DeviceAddress.ToString();
+                this.rememberMac.Remove(addr);
+                FileHelper fh = new FileHelper();
+                fh.SaveFile("remember.txt", string.Join("\r\n", this.rememberMac));
             }
         }
 
