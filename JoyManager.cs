@@ -179,28 +179,46 @@ namespace TimeBoxJoy
         {
             while (true)
             {
-                BTDeviceInfo joy = timeBoxJoyList.Where(i => i.State == deviceState.CONNECT).FirstOrDefault();
-                if (joy != null)
+                //BTDeviceInfo joy = timeBoxJoyList.Where(i => i.State == deviceState.CONNECT).FirstOrDefault();
+                //foreach(var joy in timeBoxJoyList.Where(i => i.State == deviceState.CONNECT))
+                //{
+                //    if (!joy.joyStick.CheckConnect())
+                //    {
+                //        joy.State = deviceState.LOST;
+                //        joy.joyMap.Dispose();
+                //        OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+                //    }
+                //}
+
+                //foreach(var joy in timeBoxJoyList.Where(i => i.State == deviceState.CONNECTING))
+                //{
+                //    ConnectJoy(joy);
+                //}
+
+                //foreach(var joy in timeBoxJoyList.Where(i => i.State == deviceState.LOST))
+                //{
+                //    ConnectJoy(joy);
+                //}
+
+                foreach(var joy in timeBoxJoyList)
                 {
-                    if (!joy.joyStick.CheckConnect())
+                    switch (joy.State)
                     {
-                        joy.State = deviceState.LOST;
-                        joy.joyMap.Dispose();
-                        OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+                        case deviceState.CONNECT:
+                            if (!joy.joyStick.CheckConnect())
+                            {
+                                joy.State = deviceState.LOST;
+                                joy.joyMap.Dispose();
+                                OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+                            }
+                            break;
+                        case deviceState.CONNECTING:
+                            ConnectJoy(joy);
+                            break;
+                        case deviceState.LOST:
+                            ConnectJoy(joy);
+                            break;
                     }
-                }
-
-
-                joy = timeBoxJoyList.Where(i => i.State == deviceState.CONNECTING).FirstOrDefault();
-                if (joy != null)
-                {
-                    ConnectJoy(joy);
-                }
-
-                joy = timeBoxJoyList.Where(i => i.State == deviceState.LOST).FirstOrDefault();
-                if (joy != null)
-                {
-                    ConnectJoy(joy);
                 }
 
                 Thread.Sleep(500);
@@ -231,12 +249,16 @@ namespace TimeBoxJoy
             var joy = GetDevice(index);
             if (joy != null)
             {
-                if (joy.State == deviceState.CONNECT || joy.State == deviceState.CONNECTING)
-                {
-                    joy.State = deviceState.DISCONNECT;
-                    joy.joyStick.Disconnect();
-                    OnJoyStateChange?.Invoke(this.timeBoxJoyList);
-                }
+                //if (joy.State == deviceState.CONNECT || joy.State == deviceState.CONNECTING)
+                //{
+                //    joy.State = deviceState.DISCONNECT;
+                //    joy.joyStick.Disconnect();
+                //    OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+                //}
+                joy.State = deviceState.DISCONNECT;
+                joy.joyStick.Disconnect();
+                OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+
                 var addr = joy.bluetoothDeviceInfo.DeviceAddress.ToString();
                 this.rememberMac.Remove(addr);
                 FileHelper fh = new FileHelper();

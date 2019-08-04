@@ -42,9 +42,9 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.timeBox手柄驱动ByLenshangToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.显示ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.退出ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.timeBox手柄驱动ByLenshangToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -171,6 +171,12 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(252, 70);
             // 
+            // timeBox手柄驱动ByLenshangToolStripMenuItem
+            // 
+            this.timeBox手柄驱动ByLenshangToolStripMenuItem.Name = "timeBox手柄驱动ByLenshangToolStripMenuItem";
+            this.timeBox手柄驱动ByLenshangToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
+            this.timeBox手柄驱动ByLenshangToolStripMenuItem.Text = "TimeBox手柄驱动 By Lenshang";
+            // 
             // 显示ToolStripMenuItem
             // 
             this.显示ToolStripMenuItem.Name = "显示ToolStripMenuItem";
@@ -184,12 +190,6 @@
             this.退出ToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.退出ToolStripMenuItem.Text = "退出";
             this.退出ToolStripMenuItem.Click += new System.EventHandler(this.退出ToolStripMenuItem_Click);
-            // 
-            // timeBox手柄驱动ByLenshangToolStripMenuItem
-            // 
-            this.timeBox手柄驱动ByLenshangToolStripMenuItem.Name = "timeBox手柄驱动ByLenshangToolStripMenuItem";
-            this.timeBox手柄驱动ByLenshangToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
-            this.timeBox手柄驱动ByLenshangToolStripMenuItem.Text = "TimeBox手柄驱动 By Lenshang";
             // 
             // Form1
             // 
@@ -205,7 +205,7 @@
             this.MinimumSize = new System.Drawing.Size(509, 424);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TimeBox手柄 Lenshang版 alpha 0.3";
+            this.Text = "TimeBox手柄 Lenshang版 alpha 0.4";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
