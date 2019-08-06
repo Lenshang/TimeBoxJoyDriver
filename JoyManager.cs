@@ -52,6 +52,7 @@ namespace TimeBoxJoy
             mapConfigs.Add(new KeyBoardConfig());
             mapConfigs.Add(new XInputConfig());
             mapConfigs.Add(new MixModeConfig());
+            mapConfigs.Add(new ScriptModeConfig());
             foreach (var file in Directory.GetFiles("maps"))
             {
                 var _config = DefaultMapConfig.GetConfig(file);

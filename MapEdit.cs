@@ -25,6 +25,7 @@ namespace TimeBoxJoy
         List<Xbox360Axes> allXinputAxesEnum { get; set; }
         List<Keys> allKeysEnum { get; set; }
         List<ButtonEnumModel> allMixBt { get; set; }
+        List<ButtonEnumModel> allScripts { get; set; }
         public MapEdit(JoyManager _manager,List<DefaultMapConfig> _configs, BTDeviceInfo _device)
         {
             InitializeComponent();
@@ -33,11 +34,23 @@ namespace TimeBoxJoy
             this.device = _device;
             allXinputBtEnum = GetEnumArray<Xbox360Buttons>();
             allXinputAxesEnum = GetEnumArray<Xbox360Axes>();
+            allScripts = new List<ButtonEnumModel>();
             allKeysEnum = GetEnumArray<Keys>();
             allMixBt = new List<ButtonEnumModel>();
-            allMixBt.AddRange(this.allXinputBtEnum.Select(i => new ButtonEnumModel("Xinput:" + i.ToString(), (int)i, 65535)));
-            allMixBt.AddRange(this.allKeysEnum.Select(i => new ButtonEnumModel("键盘:" + i.ToString(), (int)i)));
+            allMixBt.AddRange(this.allXinputBtEnum.Select(i => new ButtonEnumModel("360:" + i.ToString(), (int)i, 65535)));
+            allMixBt.AddRange(this.allKeysEnum.Select(i => new ButtonEnumModel(i.ToString(), (int)i)));
             allMixBt.Add(new ButtonEnumModel("未设定", (int)TimeBoxButton.NONE));
+
+            if (!Directory.Exists("joyScripts"))
+            {
+                Directory.CreateDirectory("joyScripts");
+            }
+            foreach (var file in Directory.GetFiles("joyScripts"))
+            {
+                var name = System.IO.Path.GetFileNameWithoutExtension(file);
+                var nameHash = name.GetHashCode();
+                allScripts.Add(new ButtonEnumModel(name, nameHash));
+            }
         }
 
         private void MapEdit_Load(object sender, EventArgs e)
@@ -93,6 +106,11 @@ namespace TimeBoxJoy
                 {
                     SetMixModeDefault();
                     BindMixMode(config);
+                }
+                else if (config.MapType == MapType.SCRIPT)
+                {
+                    SetScriptDefault();
+                    BindScriptMode(config);
                 }
             }
         }
@@ -241,7 +259,7 @@ namespace TimeBoxJoy
             cbLSB.Items.AddRange(allMixBt.ToArray());
             cbRSB.Items.AddRange(allMixBt.ToArray());
 
-            var axeList = allXinputAxesEnum.Select(i => new ButtonEnumModel("Xinput:"+i.ToString(), (int)i,65535)).ToList();
+            var axeList = allXinputAxesEnum.Select(i => new ButtonEnumModel("360:"+i.ToString(), (int)i,65535)).ToList();
             axeList.Add(new ButtonEnumModel("未设定", (int)TimeBoxButton.AxesNone));
             var axes = axeList.ToArray();
 
@@ -251,6 +269,100 @@ namespace TimeBoxJoy
             cbLSY.Items.AddRange(axes);
             cbRSX.Items.AddRange(axes);
             cbRSY.Items.AddRange(axes);
+        }
+
+        private void SetScriptDefault()
+        {
+            ClearComboBox();
+            cbLSUp.Enabled = true;
+            cbLSDown.Enabled = true;
+            cbLSLeft.Enabled = true;
+            cbLSRight.Enabled = true;
+            cbRSUp.Enabled = true;
+            cbRSDown.Enabled = true;
+            cbRSLeft.Enabled = true;
+            cbRSRight.Enabled = true;
+            cbLSX.Enabled = false;
+            cbLSY.Enabled = false;
+            cbRSX.Enabled = false;
+            cbRSY.Enabled = false;
+
+            //var bts = allKeysEnum.Select(i => new ButtonEnumModel(i.ToString(), (int)i)).ToArray();
+            var bts = allScripts.ToArray();
+            cbA.Items.AddRange(bts);
+            cbB.Items.AddRange(bts);
+            cbX.Items.AddRange(bts);
+            cbY.Items.AddRange(bts);
+
+            cbBack.Items.AddRange(bts);
+            cbStart.Items.AddRange(bts);
+
+            cbBackL.Items.AddRange(bts);
+            cbBackR.Items.AddRange(bts);
+
+            cbHelp.Items.AddRange(bts);
+            cbHome.Items.AddRange(bts);
+
+            cbLB.Items.AddRange(bts);
+            cbRB.Items.AddRange(bts);
+
+            cbUp.Items.AddRange(bts);
+            cbDown.Items.AddRange(bts);
+            cbLeft.Items.AddRange(bts);
+            cbRight.Items.AddRange(bts);
+            cbLT.Items.AddRange(bts);
+            cbRT.Items.AddRange(bts);
+            cbLSUp.Items.AddRange(bts);
+            cbLSDown.Items.AddRange(bts);
+            cbLSLeft.Items.AddRange(bts);
+            cbLSRight.Items.AddRange(bts);
+            cbRSUp.Items.AddRange(bts);
+            cbRSDown.Items.AddRange(bts);
+            cbRSLeft.Items.AddRange(bts);
+            cbRSRight.Items.AddRange(bts);
+
+            cbLSB.Items.AddRange(bts);
+            cbRSB.Items.AddRange(bts);
+        }
+        private void BindScriptMode(DefaultMapConfig config)
+        {
+            cbA.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.A]);
+            cbB.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.B]);
+            cbX.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.X]);
+            cbY.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.Y]);
+
+            cbBack.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.BACK]);
+            cbStart.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.START]);
+
+            cbBackL.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.LBACK]);
+            cbBackR.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.RBACK]);
+
+            cbHelp.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.HELP]);
+            cbHome.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.HOME]);
+
+            cbLB.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.LB]);
+            cbRB.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.RB]);
+
+            cbUp.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.UP]);
+            cbDown.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.DOWN]);
+            cbLeft.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.LEFT]);
+            cbRight.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.RIGHT]);
+
+            cbLT.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.LTrigger);
+            cbRT.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.RTrigger);
+
+            cbLSUp.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.LeftRemoteUp);
+            cbLSDown.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.LeftRemoteDown);
+            cbLSLeft.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.LeftRemoteLeft);
+            cbLSRight.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.LeftRemoteRight);
+
+            cbRSUp.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.RightRemoteUp);
+            cbRSDown.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.RightRemoteDown);
+            cbRSLeft.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.RightRemoteLeft);
+            cbRSRight.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.RightRemoteRight);
+
+            cbLSB.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.LSBUTTON]);
+            cbRSB.SelectedIndex = allScripts.FindIndex(i => i.ToInt() == config.Keymap[(byte)TimeBoxButton.RSBUTTON]);
         }
         private void BindXinput(DefaultMapConfig config)
         {

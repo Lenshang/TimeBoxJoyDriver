@@ -57,7 +57,7 @@ namespace TimeBoxJoy.Maps
             HoldKeyCache = _holdKeyCache;
         }
 
-        private void ParseKey(byte bt,uint dwFlags = 0)
+        public void ParseKey(byte bt,uint dwFlags = 0)
         {
             int target;
             if(this.config.Keymap.TryGetValue(bt,out target))

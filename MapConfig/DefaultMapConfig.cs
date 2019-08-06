@@ -14,7 +14,8 @@ namespace TimeBoxJoy.MapConfig
     {
         KEYBOARD=0,
         XINPUT=1,
-        MIX=2
+        MIX=2,
+        SCRIPT=3
     }
     public class DefaultMapConfig
     {

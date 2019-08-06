@@ -142,6 +142,10 @@ namespace TimeBoxJoy.Maps
                 controllerReport.SetAxis((Xbox360Axes)this.config.RTrigger, value[0]);
         }
 
+        public Xbox360Controller GetController()
+        {
+            return this.myController;
+        }
         private short getShort(byte bt,bool convert=false)
         {
             if (convert)

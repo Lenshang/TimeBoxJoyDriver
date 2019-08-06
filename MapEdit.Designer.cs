@@ -75,7 +75,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(769, 469);
+            this.button1.Location = new System.Drawing.Point(861, 530);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -89,13 +89,13 @@
             this.cbConfigList.FormattingEnabled = true;
             this.cbConfigList.Location = new System.Drawing.Point(12, 12);
             this.cbConfigList.Name = "cbConfigList";
-            this.cbConfigList.Size = new System.Drawing.Size(184, 20);
+            this.cbConfigList.Size = new System.Drawing.Size(296, 20);
             this.cbConfigList.TabIndex = 2;
             this.cbConfigList.SelectedIndexChanged += new System.EventHandler(this.CbConfigList_SelectedIndexChanged);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(202, 10);
+            this.button2.Location = new System.Drawing.Point(314, 10);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(51, 23);
             this.button2.TabIndex = 3;
@@ -147,23 +147,23 @@
             this.panel1.Controls.Add(this.cbBack);
             this.panel1.Location = new System.Drawing.Point(12, 47);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(832, 416);
+            this.panel1.Size = new System.Drawing.Size(924, 477);
             this.panel1.TabIndex = 0;
             // 
             // cbRSB
             // 
             this.cbRSB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRSB.FormattingEnabled = true;
-            this.cbRSB.Location = new System.Drawing.Point(669, 354);
+            this.cbRSB.Location = new System.Drawing.Point(712, 379);
             this.cbRSB.Name = "cbRSB";
-            this.cbRSB.Size = new System.Drawing.Size(129, 20);
+            this.cbRSB.Size = new System.Drawing.Size(149, 20);
             this.cbRSB.TabIndex = 40;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(631, 357);
+            this.label6.Location = new System.Drawing.Point(674, 382);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 12);
             this.label6.TabIndex = 39;
@@ -173,16 +173,16 @@
             // 
             this.cbLSB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLSB.FormattingEnabled = true;
-            this.cbLSB.Location = new System.Drawing.Point(41, 188);
+            this.cbLSB.Location = new System.Drawing.Point(145, 228);
             this.cbLSB.Name = "cbLSB";
-            this.cbLSB.Size = new System.Drawing.Size(81, 20);
+            this.cbLSB.Size = new System.Drawing.Size(118, 20);
             this.cbLSB.TabIndex = 38;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.BackColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(3, 191);
+            this.label5.Location = new System.Drawing.Point(103, 231);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(35, 12);
             this.label5.TabIndex = 37;
@@ -192,142 +192,142 @@
             // 
             this.cbRSLeft.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRSLeft.FormattingEnabled = true;
-            this.cbRSLeft.Location = new System.Drawing.Point(614, 309);
+            this.cbRSLeft.Location = new System.Drawing.Point(648, 332);
             this.cbRSLeft.Name = "cbRSLeft";
-            this.cbRSLeft.Size = new System.Drawing.Size(87, 20);
+            this.cbRSLeft.Size = new System.Drawing.Size(135, 20);
             this.cbRSLeft.TabIndex = 36;
             // 
             // cbRSRight
             // 
             this.cbRSRight.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRSRight.FormattingEnabled = true;
-            this.cbRSRight.Location = new System.Drawing.Point(707, 309);
+            this.cbRSRight.Location = new System.Drawing.Point(789, 332);
             this.cbRSRight.Name = "cbRSRight";
-            this.cbRSRight.Size = new System.Drawing.Size(91, 20);
+            this.cbRSRight.Size = new System.Drawing.Size(132, 20);
             this.cbRSRight.TabIndex = 35;
             // 
             // cbRSDown
             // 
             this.cbRSDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRSDown.FormattingEnabled = true;
-            this.cbRSDown.Location = new System.Drawing.Point(657, 330);
+            this.cbRSDown.Location = new System.Drawing.Point(712, 353);
             this.cbRSDown.Name = "cbRSDown";
-            this.cbRSDown.Size = new System.Drawing.Size(84, 20);
+            this.cbRSDown.Size = new System.Drawing.Size(149, 20);
             this.cbRSDown.TabIndex = 34;
             // 
             // cbRSUp
             // 
             this.cbRSUp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRSUp.FormattingEnabled = true;
-            this.cbRSUp.Location = new System.Drawing.Point(657, 286);
+            this.cbRSUp.Location = new System.Drawing.Point(712, 311);
             this.cbRSUp.Name = "cbRSUp";
-            this.cbRSUp.Size = new System.Drawing.Size(84, 20);
+            this.cbRSUp.Size = new System.Drawing.Size(149, 20);
             this.cbRSUp.TabIndex = 33;
             // 
             // cbLSLeft
             // 
             this.cbLSLeft.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLSLeft.FormattingEnabled = true;
-            this.cbLSLeft.Location = new System.Drawing.Point(3, 139);
+            this.cbLSLeft.Location = new System.Drawing.Point(27, 146);
             this.cbLSLeft.Name = "cbLSLeft";
-            this.cbLSLeft.Size = new System.Drawing.Size(70, 20);
+            this.cbLSLeft.Size = new System.Drawing.Size(113, 20);
             this.cbLSLeft.TabIndex = 32;
             // 
             // cbLSRight
             // 
             this.cbLSRight.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLSRight.FormattingEnabled = true;
-            this.cbLSRight.Location = new System.Drawing.Point(79, 139);
+            this.cbLSRight.Location = new System.Drawing.Point(145, 146);
             this.cbLSRight.Name = "cbLSRight";
-            this.cbLSRight.Size = new System.Drawing.Size(72, 20);
+            this.cbLSRight.Size = new System.Drawing.Size(118, 20);
             this.cbLSRight.TabIndex = 31;
             // 
             // cbLSDown
             // 
             this.cbLSDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLSDown.FormattingEnabled = true;
-            this.cbLSDown.Location = new System.Drawing.Point(29, 160);
+            this.cbLSDown.Location = new System.Drawing.Point(70, 166);
             this.cbLSDown.Name = "cbLSDown";
-            this.cbLSDown.Size = new System.Drawing.Size(84, 20);
+            this.cbLSDown.Size = new System.Drawing.Size(134, 20);
             this.cbLSDown.TabIndex = 30;
             // 
             // cbLSUp
             // 
             this.cbLSUp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLSUp.FormattingEnabled = true;
-            this.cbLSUp.Location = new System.Drawing.Point(29, 116);
+            this.cbLSUp.Location = new System.Drawing.Point(70, 126);
             this.cbLSUp.Name = "cbLSUp";
-            this.cbLSUp.Size = new System.Drawing.Size(84, 20);
+            this.cbLSUp.Size = new System.Drawing.Size(134, 20);
             this.cbLSUp.TabIndex = 29;
             // 
             // cbLeft
             // 
             this.cbLeft.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLeft.FormattingEnabled = true;
-            this.cbLeft.Location = new System.Drawing.Point(5, 238);
+            this.cbLeft.Location = new System.Drawing.Point(12, 279);
             this.cbLeft.Name = "cbLeft";
-            this.cbLeft.Size = new System.Drawing.Size(94, 20);
+            this.cbLeft.Size = new System.Drawing.Size(121, 20);
             this.cbLeft.TabIndex = 28;
             // 
             // cbRight
             // 
             this.cbRight.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRight.FormattingEnabled = true;
-            this.cbRight.Location = new System.Drawing.Point(132, 238);
+            this.cbRight.Location = new System.Drawing.Point(137, 279);
             this.cbRight.Name = "cbRight";
-            this.cbRight.Size = new System.Drawing.Size(98, 20);
+            this.cbRight.Size = new System.Drawing.Size(111, 20);
             this.cbRight.TabIndex = 27;
             // 
             // cbDown
             // 
             this.cbDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbDown.FormattingEnabled = true;
-            this.cbDown.Location = new System.Drawing.Point(49, 260);
+            this.cbDown.Location = new System.Drawing.Point(56, 300);
             this.cbDown.Name = "cbDown";
-            this.cbDown.Size = new System.Drawing.Size(120, 20);
+            this.cbDown.Size = new System.Drawing.Size(148, 20);
             this.cbDown.TabIndex = 26;
             // 
             // cbUp
             // 
             this.cbUp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbUp.FormattingEnabled = true;
-            this.cbUp.Location = new System.Drawing.Point(49, 217);
+            this.cbUp.Location = new System.Drawing.Point(56, 258);
             this.cbUp.Name = "cbUp";
-            this.cbUp.Size = new System.Drawing.Size(120, 20);
+            this.cbUp.Size = new System.Drawing.Size(148, 20);
             this.cbUp.TabIndex = 25;
             // 
             // cbHelp
             // 
             this.cbHelp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbHelp.FormattingEnabled = true;
-            this.cbHelp.Location = new System.Drawing.Point(49, 295);
+            this.cbHelp.Location = new System.Drawing.Point(41, 336);
             this.cbHelp.Name = "cbHelp";
-            this.cbHelp.Size = new System.Drawing.Size(120, 20);
+            this.cbHelp.Size = new System.Drawing.Size(148, 20);
             this.cbHelp.TabIndex = 24;
             // 
             // cbBackR
             // 
             this.cbBackR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbBackR.FormattingEnabled = true;
-            this.cbBackR.Location = new System.Drawing.Point(437, 393);
+            this.cbBackR.Location = new System.Drawing.Point(488, 454);
             this.cbBackR.Name = "cbBackR";
-            this.cbBackR.Size = new System.Drawing.Size(96, 20);
+            this.cbBackR.Size = new System.Drawing.Size(124, 20);
             this.cbBackR.TabIndex = 23;
             // 
             // cbBackL
             // 
             this.cbBackL.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbBackL.FormattingEnabled = true;
-            this.cbBackL.Location = new System.Drawing.Point(289, 393);
+            this.cbBackL.Location = new System.Drawing.Point(302, 454);
             this.cbBackL.Name = "cbBackL";
-            this.cbBackL.Size = new System.Drawing.Size(97, 20);
+            this.cbBackL.Size = new System.Drawing.Size(122, 20);
             this.cbBackL.TabIndex = 4;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(616, 262);
+            this.label3.Location = new System.Drawing.Point(680, 292);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(11, 12);
             this.label3.TabIndex = 22;
@@ -337,7 +337,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.BackColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(616, 236);
+            this.label4.Location = new System.Drawing.Point(680, 272);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(11, 12);
             this.label4.TabIndex = 21;
@@ -347,7 +347,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(128, 194);
+            this.label2.Location = new System.Drawing.Point(128, 214);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(11, 12);
             this.label2.TabIndex = 20;
@@ -357,7 +357,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(128, 168);
+            this.label1.Location = new System.Drawing.Point(128, 191);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(11, 12);
             this.label1.TabIndex = 19;
@@ -367,7 +367,7 @@
             // 
             this.cbRSY.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRSY.FormattingEnabled = true;
-            this.cbRSY.Location = new System.Drawing.Point(633, 259);
+            this.cbRSY.Location = new System.Drawing.Point(697, 289);
             this.cbRSY.Name = "cbRSY";
             this.cbRSY.Size = new System.Drawing.Size(144, 20);
             this.cbRSY.TabIndex = 18;
@@ -376,16 +376,16 @@
             // 
             this.cbLSY.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLSY.FormattingEnabled = true;
-            this.cbLSY.Location = new System.Drawing.Point(145, 191);
+            this.cbLSY.Location = new System.Drawing.Point(145, 208);
             this.cbLSY.Name = "cbLSY";
-            this.cbLSY.Size = new System.Drawing.Size(96, 20);
+            this.cbLSY.Size = new System.Drawing.Size(118, 20);
             this.cbLSY.TabIndex = 17;
             // 
             // cbA
             // 
             this.cbA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbA.FormattingEnabled = true;
-            this.cbA.Location = new System.Drawing.Point(657, 207);
+            this.cbA.Location = new System.Drawing.Point(721, 234);
             this.cbA.Name = "cbA";
             this.cbA.Size = new System.Drawing.Size(120, 20);
             this.cbA.TabIndex = 16;
@@ -394,7 +394,7 @@
             // 
             this.cbB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbB.FormattingEnabled = true;
-            this.cbB.Location = new System.Drawing.Point(657, 177);
+            this.cbB.Location = new System.Drawing.Point(721, 206);
             this.cbB.Name = "cbB";
             this.cbB.Size = new System.Drawing.Size(120, 20);
             this.cbB.TabIndex = 15;
@@ -403,7 +403,7 @@
             // 
             this.cbY.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbY.FormattingEnabled = true;
-            this.cbY.Location = new System.Drawing.Point(657, 148);
+            this.cbY.Location = new System.Drawing.Point(721, 166);
             this.cbY.Name = "cbY";
             this.cbY.Size = new System.Drawing.Size(120, 20);
             this.cbY.TabIndex = 14;
@@ -412,7 +412,7 @@
             // 
             this.cbX.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbX.FormattingEnabled = true;
-            this.cbX.Location = new System.Drawing.Point(657, 116);
+            this.cbX.Location = new System.Drawing.Point(721, 138);
             this.cbX.Name = "cbX";
             this.cbX.Size = new System.Drawing.Size(120, 20);
             this.cbX.TabIndex = 13;
@@ -421,7 +421,7 @@
             // 
             this.cbRSX.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRSX.FormattingEnabled = true;
-            this.cbRSX.Location = new System.Drawing.Point(633, 233);
+            this.cbRSX.Location = new System.Drawing.Point(697, 269);
             this.cbRSX.Name = "cbRSX";
             this.cbRSX.Size = new System.Drawing.Size(144, 20);
             this.cbRSX.TabIndex = 12;
@@ -430,16 +430,16 @@
             // 
             this.cbLSX.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLSX.FormattingEnabled = true;
-            this.cbLSX.Location = new System.Drawing.Point(145, 165);
+            this.cbLSX.Location = new System.Drawing.Point(145, 188);
             this.cbLSX.Name = "cbLSX";
-            this.cbLSX.Size = new System.Drawing.Size(96, 20);
+            this.cbLSX.Size = new System.Drawing.Size(118, 20);
             this.cbLSX.TabIndex = 11;
             // 
             // cbRB
             // 
             this.cbRB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRB.FormattingEnabled = true;
-            this.cbRB.Location = new System.Drawing.Point(657, 80);
+            this.cbRB.Location = new System.Drawing.Point(721, 93);
             this.cbRB.Name = "cbRB";
             this.cbRB.Size = new System.Drawing.Size(120, 20);
             this.cbRB.TabIndex = 10;
@@ -448,7 +448,7 @@
             // 
             this.cbLB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLB.FormattingEnabled = true;
-            this.cbLB.Location = new System.Drawing.Point(49, 80);
+            this.cbLB.Location = new System.Drawing.Point(84, 91);
             this.cbLB.Name = "cbLB";
             this.cbLB.Size = new System.Drawing.Size(120, 20);
             this.cbLB.TabIndex = 9;
@@ -457,7 +457,7 @@
             // 
             this.cbRT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRT.FormattingEnabled = true;
-            this.cbRT.Location = new System.Drawing.Point(657, 49);
+            this.cbRT.Location = new System.Drawing.Point(721, 58);
             this.cbRT.Name = "cbRT";
             this.cbRT.Size = new System.Drawing.Size(120, 20);
             this.cbRT.TabIndex = 8;
@@ -466,7 +466,7 @@
             // 
             this.cbLT.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLT.FormattingEnabled = true;
-            this.cbLT.Location = new System.Drawing.Point(49, 49);
+            this.cbLT.Location = new System.Drawing.Point(84, 58);
             this.cbLT.Name = "cbLT";
             this.cbLT.Size = new System.Drawing.Size(120, 20);
             this.cbLT.TabIndex = 7;
@@ -475,7 +475,7 @@
             // 
             this.cbHome.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbHome.FormattingEnabled = true;
-            this.cbHome.Location = new System.Drawing.Point(352, 34);
+            this.cbHome.Location = new System.Drawing.Point(395, 49);
             this.cbHome.Name = "cbHome";
             this.cbHome.Size = new System.Drawing.Size(120, 20);
             this.cbHome.TabIndex = 6;
@@ -484,7 +484,7 @@
             // 
             this.cbStart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStart.FormattingEnabled = true;
-            this.cbStart.Location = new System.Drawing.Point(657, 20);
+            this.cbStart.Location = new System.Drawing.Point(721, 19);
             this.cbStart.Name = "cbStart";
             this.cbStart.Size = new System.Drawing.Size(120, 20);
             this.cbStart.TabIndex = 5;
@@ -493,7 +493,7 @@
             // 
             this.cbBack.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbBack.FormattingEnabled = true;
-            this.cbBack.Location = new System.Drawing.Point(49, 20);
+            this.cbBack.Location = new System.Drawing.Point(84, 25);
             this.cbBack.Name = "cbBack";
             this.cbBack.Size = new System.Drawing.Size(120, 20);
             this.cbBack.TabIndex = 4;
@@ -503,15 +503,15 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(855, 499);
+            this.ClientSize = new System.Drawing.Size(948, 565);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.cbConfigList);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.panel1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(871, 538);
+            this.MaximumSize = new System.Drawing.Size(964, 604);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(871, 538);
+            this.MinimumSize = new System.Drawing.Size(964, 604);
             this.Name = "MapEdit";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "MapEdit";

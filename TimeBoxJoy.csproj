@@ -114,6 +114,7 @@
     <Compile Include="MapConfig\DefaultMapConfig.cs" />
     <Compile Include="MapConfig\KeyBoardConfig.cs" />
     <Compile Include="MapConfig\MixModeConfig.cs" />
+    <Compile Include="MapConfig\ScriptModeConfig.cs" />
     <Compile Include="MapConfig\XInputConfig.cs" />
     <Compile Include="MapEdit.cs">
       <SubType>Form</SubType>
@@ -125,6 +126,7 @@
     <Compile Include="JoyStick.cs" />
     <Compile Include="Maps\KeyBoardJoyMap.cs" />
     <Compile Include="Maps\MixModeJoyMap.cs" />
+    <Compile Include="Maps\ScriptJoyMap.cs" />
     <Compile Include="Maps\VitualXinputJoyMap.cs" />
     <Compile Include="NewMap.cs">
       <SubType>Form</SubType>
