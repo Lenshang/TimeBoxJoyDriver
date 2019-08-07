@@ -204,7 +204,6 @@
     <Content Include="1.ico" />
     <Content Include="2.ico" />
     <Content Include="3.ico" />
-    <Content Include="Web\index.html" />
     <Content Include="Web\lib\bootbox\4.4.0\bootbox.js" />
     <Content Include="Web\lib\bootbox\4.4.0\bootbox.min.js" />
     <Content Include="Web\lib\ColorPicker\1.5.0\ColorPicker.js" />
@@ -333,6 +332,7 @@
     <Content Include="Web\lib\Validform\5.3.2\Validform.js" />
     <Content Include="Web\lib\Validform\5.3.2\Validform.min.js" />
     <Content Include="Web\lib\waterfall.min.js" />
+    <Content Include="Web\Main.html" />
     <Content Include="Web\static\h-ui\css\H-ui.css" />
     <Content Include="Web\static\h-ui\css\H-ui.ie.css" />
     <Content Include="Web\static\h-ui\css\H-ui.min.css" />
@@ -736,9 +736,6 @@
     <Content Include="Web\static\h-ui\src\js\jQuery.stickUp.js" />
     <Content Include="Web\static\h-ui\src\js\jQuery.stopDefault.js" />
     <Content Include="Web\static\h-ui\src\js\mValue.js" />
-    <Content Include="Web\temp\banner1.jpg" />
-    <Content Include="Web\temp\banner2.jpg" />
-    <Content Include="Web\temp\banner3.jpg" />
     <None Include="MapPic.png" />
   </ItemGroup>
   <ItemGroup />

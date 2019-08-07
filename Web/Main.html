@@ -33,9 +33,13 @@
     </header>
     <body class="main">
         <div style="float: left;width: 40%;height: 100%;overflow-y:auto;background-color:#555555">
+            <input class="btn btn-warning" id="scanButton" type="button" onclick="startScan()" style="width: 100%" value="重新扫描">
             <ul class="dropDown-menu menu radius box-shadow" style="width:93%;margin-left: 3%;margin-top: 3%;margin-right: 3%;" id="deviceLists">
-                <li><a style="color: #ff0000" id="scanButton" onclick="startScan()">重新扫描</a></li>
             </ul>
+            <div style="bottom: 20px;left: 20px;position: absolute">
+                <input style="margin-right: 10px" onclick="showThanks()" class="btn btn-secondary-outline radius size-MINI" type="button" value="特别感谢">
+                <input style="margin-right: 10px" onclick="closeApplication()" class="btn btn-danger-outline radius size-MINI" type="button" value="关闭程序">
+            </div>
         </div>
         <div style="float: left;width: 55%">
             <div style="margin: 10px; width: 100%;text-align: center">
@@ -51,7 +55,36 @@
                 </div>
             </div>
         </div>
-        
+        <!--弹出窗口 Special Thanks-->
+        <div id="thank" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content radius">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Special Thanks</h3>
+                        <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+                    </div>
+                    <div class="modal-body" style="height: 200px;overflow-y:scroll;">
+                        <p style="color: #ff0000">蓝牙连接框架支持：</p>
+                        <h4>32feet.NET (https://github.com/inthehand/32feet)</h4>
+                        <p style="color: #ff0000">虚拟XBOX360手柄驱动支持：</p>
+                        <h4>ViGEm(https://github.com/ViGEm)</h4>
+                        <p style="color: #ff0000">JS脚本支持:</p>
+                        <h4>Microsoft ClearScript(https://github.com/microsoft/ClearScript)</h4>
+                        <p style="color: #ff0000">前端界面UI框架:</p>
+                        <h4>H-UI(http://www.h-ui.net/)</h4>
+                        <p style="color: #ff0000">初版TimeBox破解以及思路参考:</p>
+                        <h4>索马里的海盗(QQ:3298302054)</h4>
+                        <P style="color: #ff0000">Timebox手柄映射键码整理文档:</P>
+                        <h4>Issac Testar(mail:hyx0329@gmail.com)</h4>
+                        <br>
+                        <p>作者:小连连</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui/1.9.1/jquery-ui.min.js"></script>
         <script type="text/javascript" src="static/h-ui/js/H-ui.js"></script>
@@ -65,23 +98,36 @@
                 window.selectIndex=index;
                 var ul=document.querySelectorAll("#deviceLists a");
                 var show=document.querySelector("#selectName");
-                var text=ul[index+1].innerText.split("[")[0]
-                show.innerText=text;
+                var text=ul[index].innerHTML;
+                show.innerHTML=text;
             }
             function onlistChange(lists){
                 var ul=document.querySelector("#deviceLists")
                 //先删除标签内容
-                for(var i = 1;i<ul.children.length;i++){
-                    ul.removeChild(ul.children[i]);
-                }
+                ul.innerHTML='';
                 //再添加
                 strs = lists.split(";");
                 for (i = 0; i < strs.length; i++) { 
-
+                    if(strs[i].length==0){
+                        continue;
+                    }
                     var li = document.createElement("li");
                     var a = document.createElement("a");
                     a.setAttribute("onclick", "clickItem("+i+")");
-                    a.innerText=strs[i];
+                    var addr=strs[i].split('[')[0];
+                    var state=strs[i].split('[')[1].slice(0,-1);
+                    if(state=="DISCONNECT"){
+                        a.innerHTML=addr+'<span style="margin-left:15px" class="label label-default radius">未连接</span>';
+                    }
+                    else if(state=="CONNECTING"){
+                        a.innerHTML=addr+'<span style="margin-left:15px" class="label label-secondary radius">连接中</span>';
+                    }
+                    else if(state=="CONNECT"){
+                        a.innerHTML=addr+'<span style="margin-left:15px" class="label label-success radius">已连接</span>';
+                    }
+                    else{
+                        a.innerHTML=addr+'<span style="margin-left:15px" class="label label-danger radius">丢失</span>';
+                    }
                     li.appendChild(a);
                     ul.appendChild(li);
                 }
@@ -89,7 +135,8 @@
 
             function changeScanState(msg){
                 var bt=document.querySelector("#scanButton");
-                bt.innerText=msg;
+                bt.value=msg;
+                //bt.innerText=msg;
             }
 
             function startScan(){
@@ -114,6 +161,14 @@
 
             function showMsg(msg){
                 $.Huimodalalert(msg,2000);
+            }
+
+            function showThanks(){
+                $("#thank").modal("show")
+            }
+
+            function closeApplication(){
+                window.external.CloseApp();
             }
         </script>
     </body>

@@ -16,6 +16,7 @@ namespace TimeBoxJoy
         JoyManager manager;
         bool AutoHide = false;
         bool HideBalloon = false;
+        object locker = new object();
         public NewForm(string[] args)
         {
             InitializeComponent();
@@ -129,6 +130,12 @@ namespace TimeBoxJoy
                 mainWebBrowser.Document.InvokeScript("showMsg", new object[] { msg });
             }));
         }
+
+        public void CloseApp()
+        {
+            notifyIcon1.Visible = false;
+            System.Environment.Exit(0);
+        }
         private void NewForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
@@ -143,7 +150,10 @@ namespace TimeBoxJoy
 
         private void 关于作者ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("一个神秘的人");
+            this.Show();
+            this.Visible = true;
+            mainWebBrowser.Document.InvokeScript("showThanks");
+            //MessageBox.Show("一个神秘的人");
         }
 
         private void 退出ToolStripMenuItem_Click(object sender, EventArgs e)
