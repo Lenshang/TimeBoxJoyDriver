@@ -46,7 +46,7 @@
             this.webBrowser1.Location = new System.Drawing.Point(0, 0);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(711, 454);
+            this.webBrowser1.Size = new System.Drawing.Size(902, 513);
             this.webBrowser1.TabIndex = 0;
             // 
             // mainWebBrowser
@@ -56,7 +56,7 @@
             this.mainWebBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.mainWebBrowser.Name = "mainWebBrowser";
             this.mainWebBrowser.ScrollBarsEnabled = false;
-            this.mainWebBrowser.Size = new System.Drawing.Size(711, 454);
+            this.mainWebBrowser.Size = new System.Drawing.Size(902, 513);
             this.mainWebBrowser.TabIndex = 1;
             this.mainWebBrowser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.MainWebBrowser_DocumentCompleted);
             // 
@@ -80,21 +80,21 @@
             // 显示ToolStripMenuItem
             // 
             this.显示ToolStripMenuItem.Name = "显示ToolStripMenuItem";
-            this.显示ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.显示ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.显示ToolStripMenuItem.Text = "显示";
             this.显示ToolStripMenuItem.Click += new System.EventHandler(this.显示ToolStripMenuItem_Click);
             // 
             // 关于作者ToolStripMenuItem
             // 
             this.关于作者ToolStripMenuItem.Name = "关于作者ToolStripMenuItem";
-            this.关于作者ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.关于作者ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.关于作者ToolStripMenuItem.Text = "关于";
             this.关于作者ToolStripMenuItem.Click += new System.EventHandler(this.关于作者ToolStripMenuItem_Click);
             // 
             // 退出ToolStripMenuItem
             // 
             this.退出ToolStripMenuItem.Name = "退出ToolStripMenuItem";
-            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.退出ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.退出ToolStripMenuItem.Text = "退出";
             this.退出ToolStripMenuItem.Click += new System.EventHandler(this.退出ToolStripMenuItem_Click);
             // 
@@ -102,14 +102,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(711, 454);
+            this.ClientSize = new System.Drawing.Size(902, 513);
             this.Controls.Add(this.mainWebBrowser);
             this.Controls.Add(this.webBrowser1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(727, 493);
+            this.MinimumSize = new System.Drawing.Size(918, 552);
             this.Name = "NewForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TimeBox手柄 alpha 0.8";
+            this.Text = "TimeBox手柄 alpha 0.85";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NewForm_FormClosing);
             this.Load += new System.EventHandler(this.NewForm_Load);
             this.contextMenuStrip1.ResumeLayout(false);

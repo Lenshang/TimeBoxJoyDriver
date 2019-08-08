@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TimeBoxJoy.Utils;
 
 namespace TimeBoxJoy
 {
@@ -48,8 +49,15 @@ namespace TimeBoxJoy
             {
                 manager = new JoyManager(
                     OnJoyMessageReceive: buffer => {
+                        this.Invoke(new Action(()=> {
+                            string text = HexHelper.byteToHexStr(buffer, buffer.Length);
+                            mainWebBrowser.Document.InvokeScript("addCommit", new object[] { text });
+                        }));
                     },
                     OnMessage: msg => {
+                        this.Invoke(new Action(() => {
+                            mainWebBrowser.Document.InvokeScript("addCommit", new object[] { msg });
+                        }));
                     },
                     OnJoyStateChange: joys => {
                         this.Invoke(new Action(() => {
@@ -72,8 +80,8 @@ namespace TimeBoxJoy
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message);
-                ShowMsg(ex.Message);
+                MessageBox.Show(ex.Message);
+                //ShowMsg(ex.Message);
                 System.Environment.Exit(0);
             }
         }

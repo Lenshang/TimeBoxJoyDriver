@@ -157,6 +157,7 @@ namespace TimeBoxJoy
             {
                 joy.State = deviceState.CONNECT;
                 OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+                OnMessage?.Invoke(addr+"连接成功!");
                 joy.joyStick.OnReceive = buffer => {
                     //string text = HexHelper.byteToHexStr(buffer, 18);
                     //this.ShowMsg(text);
@@ -211,6 +212,7 @@ namespace TimeBoxJoy
                                 joy.State = deviceState.LOST;
                                 joy.joyMap.Dispose();
                                 OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+                                OnMessage?.Invoke(joy.bluetoothDeviceInfo.DeviceAddress.ToString() + "连接已丢失!");
                             }
                             break;
                         case deviceState.CONNECTING:
@@ -238,6 +240,7 @@ namespace TimeBoxJoy
                 {
                     joy.State = deviceState.CONNECTING;
                     OnJoyStateChange?.Invoke(this.timeBoxJoyList);
+                    OnMessage?.Invoke(joy.bluetoothDeviceInfo.DeviceAddress.ToString() + "连接中!");
                 }
             }
         }
@@ -259,7 +262,7 @@ namespace TimeBoxJoy
                 joy.State = deviceState.DISCONNECT;
                 joy.joyStick.Disconnect();
                 OnJoyStateChange?.Invoke(this.timeBoxJoyList);
-
+                OnMessage?.Invoke(joy.bluetoothDeviceInfo.DeviceAddress.ToString() + "连接已断开!");
                 var addr = joy.bluetoothDeviceInfo.DeviceAddress.ToString();
                 this.rememberMac.Remove(addr);
                 FileHelper fh = new FileHelper();

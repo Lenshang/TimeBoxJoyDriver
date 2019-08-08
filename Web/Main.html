@@ -29,10 +29,31 @@
                 height: 100%;
                 position: absolute;
             }
+            .commentList{
+                margin-left:10px;
+            }
+            .commentList .item{list-style: none outside none;margin: 1.6rem 0 0}
+            .commentList .avatar{border: 1px solid transparent;float: left}
+            .comment-main{position:relative;margin-left:64px;border:1px solid #dedede;border-radius:2px}
+            .comment-main:before,.comment-main:after{position:absolute;top:11px;left:-16px;right:100%;width:0;height:0;display:block;content:" ";border-color:transparent;border-style:solid solid outset;pointer-events:none}
+            .comment-main:before{border-right-color:#dedede;border-width:8px}
+            .comment-main:after{border-width:7px;border-right-color:#f8f8f8;margin-top:1px;margin-left:2px}
+    	    .comment-header{padding:10px 15px;background:#f8f8f8;border-bottom:1px solid #eee}
+        	.comment-title{margin:0 0 8px 0;font-size:1.6rem;line-height:1.2}
+            .comment-meta{font-size:13px;color:#999;line-height:1.2}
+            .comment-meta a{color:#999}
+            .comment-author{font-weight:700;color:#999}
+            .comment-body{padding:15px;overflow:hidden}
+            .comment-body>:last-child{margin-bottom:0}
+            .commentList .comment-flip .avatar {float: right}
+            .comment-flip .comment-main{margin-left: 0; margin-right: 64px}
+            .comment-flip .comment-main:before {border-left-color: #dedede;border-right-color: transparent}
+            .comment-flip .comment-main:before, .comment-flip .comment-main:after {left: 100%;position: absolute;right: -16px}
+            .comment-flip .comment-main:after {border-left-color: #f8f8f8;border-right-color: transparent;margin-left: auto;margin-right: 2px}
         </style>
     </header>
     <body class="main">
-        <div style="float: left;width: 40%;height: 100%;overflow-y:auto;background-color:#555555">
+        <div style="float: left;width: 25%;height: 100%;overflow-y:auto;background-color:#555555">
             <input class="btn btn-warning" id="scanButton" type="button" onclick="startScan()" style="width: 100%" value="重新扫描">
             <ul class="dropDown-menu menu radius box-shadow" style="width:93%;margin-left: 3%;margin-top: 3%;margin-right: 3%;" id="deviceLists">
             </ul>
@@ -41,17 +62,26 @@
                 <input style="margin-right: 10px" onclick="closeApplication()" class="btn btn-danger-outline radius size-MINI" type="button" value="关闭程序">
             </div>
         </div>
-        <div style="float: left;width: 55%">
-            <div style="margin: 10px; width: 100%;text-align: center">
-                <h3>当前选择</h3>
-                <div style="height: 250px"><h4 style="color: #333333;margin-top: 10px" id="selectName"></h4></div>
-                <div>
+        <div style="float: left;width: 75%;height: 100%">
+            <div style="width: 100%;height: 100%;;text-align: center">
+                <div style="height: 10%">
+                    <h3>当前选择</h3>
+                </div>
+                <div style="height: 10%"><h4 style="color: #333333;margin-top: 10px" id="selectName"></h4></div>
+                <div style="overflow-y:auto;height: 50%;width: 95%">
+                    <ul id="commentList" class="commentList">
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center">
+                <div style="position: absolute;width:75%;bottom:60px;">
                     <input type="button" onclick="showEdit()" class="btn btn-primary size-L radius" style="width: 120px" value="编辑映射" data-toggle="tooltip" data-placement="top" title="编辑手柄映射自由映射功能">
                     <input type="button" onclick="changeLed()" class="btn btn-primary size-L radius" style="width: 120px" value="切换LED灯" data-toggle="tooltip" data-placement="top" title="切换手柄上显示的LED灯">
-                </div>
-                <div style="margin-top: 10px">
                     <input type="button" onclick="connect()" class="btn btn-success size-L radius" style="width: 120px" value="连接手柄" data-toggle="tooltip" data-placement="bottom" title="连接选中的手柄">
                     <input type="button" onclick="disconnect()" class="btn btn-danger size-L radius" style="width: 120px" value="断开连接" data-toggle="tooltip" data-placement="bottom" title="断开选中的手柄,并且不再自动连接">
+                </div>
+                <div style="margin-top: 10px">
+
                 </div>
             </div>
         </div>
@@ -92,8 +122,14 @@
         <script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
         <script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script>
         <script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+        <script type="text/javascript" src="lib/datetimehelper.js"></script>
         <script>
+            function rnd(n, m){
+                var random = Math.floor(Math.random()*(m-n+1)+n);
+                return random;
+            }
             window.selectIndex=0;
+            window.messages=[];
             function clickItem(index){
                 window.selectIndex=index;
                 var ul=document.querySelectorAll("#deviceLists a");
@@ -166,7 +202,46 @@
             function showThanks(){
                 $("#thank").modal("show")
             }
+            function addCommit(msg){
+                var ul=document.querySelector("#commentList")
 
+
+                var myDate = new Date();
+                var dateStr1=myDate.toISOString();
+                var dateStr2=myDate.Format("yyyy-MM-dd HH:mm:ss");
+                var liStr=
+                '<a href="#"><i class="avatar size-L radius"><img alt="" src="./image/'+rnd(1,5)+'.ico"></i></a>'+
+                '<div class="comment-main">'+
+                    '<header class="comment-header">'+
+                        '<div class="comment-meta"><a class="comment-author" href="#">系统消息</a> 发生在'+
+                            '<time datetime="'+dateStr1+'">'+dateStr2+'</time>'+
+                        '</div>'+
+                    '</header>'+
+                    '<div class="comment-body">'+
+                        '<p>'+msg+'</p>'+
+                    '</div>'+
+                '</div>'
+                if(window.messages.length>=10){
+                    window.messages=[];
+                }
+                window.messages.push(liStr);
+                //arr.splice(0, 0, li);// 拼接函数(索引位置, 要删除元素的数量, 元素)
+                ul.innerHTML="";
+                //arr.push(li);
+                for(var i=window.messages.length-1;i>=0;i--){
+                    var li = document.createElement("li");
+                    if(i==window.messages.length-1){
+                        li.className="item cl hui-fadeinT";
+                    }
+                    else{
+                        li.className="item cl"
+                    }
+                    li.innerHTML=window.messages[i];
+                    ul.appendChild(li);
+                 }
+                
+                //ul.appendChild(li);
+            }
             function closeApplication(){
                 window.external.CloseApp();
             }
